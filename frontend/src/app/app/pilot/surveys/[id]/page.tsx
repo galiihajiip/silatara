@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { CmsPageHeader } from "@/components/cms/Bento";
 import { SurveyForm } from "@/components/pilot/SurveyForm";
-import { ErrorState, PageHeader } from "@/components/ui";
+import { ErrorState } from "@/components/ui";
 import { requireUser, sGet } from "@/lib/server-api";
 import type { SurveyOut } from "@/lib/types";
 
@@ -13,10 +14,10 @@ export default async function SurveyPage({ params }: { params: Promise<{ id: str
   const s = r.data.find((x) => x.id === id);
   if (!s) notFound();
   return (
-    <>
-      <p className="mb-4 text-sm"><Link className="underline" href="/app/pilot">← Program Pilot</Link></p>
-      <PageHeader eyebrow="Survei" title={s.title} description="Jawaban Anda membantu menilai uji coba ini. Anda hanya dapat mengisi sekali." />
+    <div className="space-y-5">
+      <p className="text-xs font-medium text-slate-500"><Link className="text-forest-800 hover:underline" href="/app/pilot">← Program Pilot</Link></p>
+      <CmsPageHeader eyebrow="Survei" title={s.title} description="Hanya dapat diisi sekali." />
       <SurveyForm survey={s} />
-    </>
+    </div>
   );
 }
