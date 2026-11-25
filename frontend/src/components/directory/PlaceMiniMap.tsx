@@ -19,11 +19,11 @@ export function PlaceMiniMap({ lat, lng, precision, label }: { lat: number; lng:
       L.tileLayer(TILE_URL, { attribution: TILE_ATTRIBUTION, maxZoom: 19 }).addTo(m);
       if (exact) {
         L.marker([lat, lng], {
-          icon: L.divIcon({ className: "", html: '<span class="sil-pin sil-pin--drop" style="--pin:#315c4d"><b>•</b></span>', iconSize: [28, 28], iconAnchor: [14, 28] }),
+          icon: L.divIcon({ className: "", html: '<span class="sil-pin sil-pin--drop" style="--pin:#6d1b11"><b>•</b></span>', iconSize: [28, 28], iconAnchor: [14, 28] }),
           title: label, alt: label,
         }).addTo(m);
       } else {
-        L.circle([lat, lng], { radius: 15000, color: "#315c4d", weight: 2, dashArray: "6 6", fillOpacity: 0.08 }).bindTooltip("Lokasi tingkat kabupaten/kota").addTo(m);
+        L.circle([lat, lng], { radius: 15000, color: "#6d1b11", weight: 2, dashArray: "6 6", fillOpacity: 0.08 }).bindTooltip("Lokasi tingkat kabupaten/kota").addTo(m);
       }
     }).catch(() => setFailed(true));
     return () => { gone = true; m?.remove(); };
