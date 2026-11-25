@@ -13,7 +13,7 @@ export function PhaseEditor({ phases, onChange, disabled }: { phases: StudioPhas
   const toMs = (s: string) => (s.trim() === "" || Number.isNaN(Number(s)) ? null : Math.max(0, Math.round(Number(s) * 1000)));
   return (
     <div className="space-y-4">
-      {phases.length === 0 && <p className="rounded-xl border border-dashed border-line-200 px-4 py-6 text-center text-sm text-slate-600">Belum ada fase. Tambahkan fase sesuai cara perguruan Anda memecah gerakan — jumlah dan namanya sepenuhnya Anda tentukan.</p>}
+      {phases.length === 0 && <p className="rounded-xl border border-dashed border-line-200 px-4 py-6 text-center text-sm text-slate-600">Belum ada fase. Tambahkan fase sesuai cara perguruan Anda memecah gerakan, jumlah dan namanya sepenuhnya Anda tentukan.</p>}
       <ol className="space-y-4">
         {phases.map((p, i) => (
           <li key={i} className="rounded-xl border border-line-200 bg-parchment-100/50 p-4">

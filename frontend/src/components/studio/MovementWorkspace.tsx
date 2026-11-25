@@ -150,13 +150,17 @@ export function MovementWorkspace({ initial, initialHistory }: { initial: Studio
         <p className="mt-2 text-sm text-slate-600">{mv.tradition_name} · {mv.partner_name} · versi {doc.version_no} ({doc.status_label.toLowerCase()}){mv.published_version_no ? ` · tayang: v${mv.published_version_no}` : " · belum tayang"}</p>
       </header>
 
-      <div className="grid gap-8 lg:grid-cols-[15rem_1fr]">
-        <aside className="lg:sticky lg:top-6 lg:self-start" aria-label="Navigasi dokumentasi">
-          <nav aria-label="Bagian dokumentasi" className="mb-5"><ul className="space-y-0.5 text-sm">{sections.map(([id, label]) => (
-            <li key={id}><a href={`#${id}`} className="block rounded-lg px-3 py-1.5 hover:bg-parchment-100">{label}</a></li>))}</ul></nav>
-          <div className="rounded-xl border border-line-200 bg-paper-50 p-4"><Checklist items={doc.completeness} label={`Kelengkapan (${done}/${doc.completeness.length})`} /></div>
-          <p aria-live="polite" className={`mt-4 text-xs ${save.state === "error" ? "text-clay-600" : "text-slate-600"}`}>{saveText}</p>
-          <Link href={`/app/studio/movements/${mv.id}/calibration`} className="mt-4 block text-sm underline">Calibration Workspace →</Link>
+      <div className="grid gap-6 lg:grid-cols-[15.5rem_1fr]">
+        <aside className="space-y-4 lg:sticky lg:top-[5.25rem] lg:self-start" aria-label="Navigasi dokumentasi">
+          <div className="rounded-[24px] border border-slate-200/80 bg-white p-4 shadow-[0_2px_12px_rgba(15,23,42,0.03)]">
+            <nav aria-label="Bagian dokumentasi"><ul className="space-y-0.5 text-sm">{sections.map(([id, label]) => (
+              <li key={id}><a href={`#${id}`} className="block rounded-xl px-3 py-1.5 font-medium text-slate-600 transition-colors hover:bg-parchment-100 hover:text-forest-900">{label}</a></li>))}</ul></nav>
+          </div>
+          <div className="rounded-[24px] border border-slate-200/80 bg-white p-4 shadow-[0_2px_12px_rgba(15,23,42,0.03)]">
+            <Checklist items={doc.completeness} label={`Kelengkapan (${done}/${doc.completeness.length})`} />
+            <p aria-live="polite" className={`mt-3 text-xs ${save.state === "error" ? "text-clay-600" : "text-slate-500"}`}>{saveText}</p>
+            <Link href={`/app/studio/movements/${mv.id}/calibration`} className="mt-3 inline-flex items-center text-xs font-medium text-forest-800 hover:text-bronze-700 hover:underline">Calibration Workspace →</Link>
+          </div>
         </aside>
 
         <div className="min-w-0 space-y-6">
@@ -172,7 +176,7 @@ export function MovementWorkspace({ initial, initialHistory }: { initial: Studio
             <div className="grid gap-4 sm:grid-cols-2">
               <Field id="name_id" label="Nama gerakan" required><input id="name_id" value={f.name_id} disabled={dis} maxLength={200} onChange={(e) => set("name_id", e.target.value)} className={inputCls} /></Field>
               <Field id="name_local" label="Nama lokal / istilah daerah"><input id="name_local" value={f.name_local} disabled={dis} maxLength={200} onChange={(e) => set("name_local", e.target.value)} className={inputCls} /></Field>
-              <Field id="level" label="Tingkat" required><select id="level" value={f.level} disabled={dis} onChange={(e) => set("level", e.target.value as Level | "")} className={inputCls}><option value="">— pilih —</option>{Object.entries(LEVEL_LABEL).map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select></Field>
+              <Field id="level" label="Tingkat" required><select id="level" value={f.level} disabled={dis} onChange={(e) => set("level", e.target.value as Level | "")} className={inputCls}><option value="">Pilih</option>{Object.entries(LEVEL_LABEL).map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select></Field>
               <div><p className="mb-1 text-sm font-medium">Tradisi · Perguruan sumber</p><p className="rounded-xl bg-parchment-100 px-3 py-2.5 text-sm">{mv.tradition_name} · {mv.partner_name}</p></div>
             </div>
             <fieldset disabled={dis}>
@@ -181,7 +185,7 @@ export function MovementWorkspace({ initial, initialHistory }: { initial: Studio
                 <label key={v} className={`flex cursor-pointer items-start gap-2 rounded-xl border p-3 text-sm ${f.safety_category === v ? "border-forest-700 bg-forest-700/5" : "border-line-200"}`}>
                   <input type="radio" name="safety_category" value={v} checked={f.safety_category === v} onChange={() => set("safety_category", v as SafetyCategory)} className="mt-1" />
                   <span><span className="block font-medium">{l}</span><span className="text-slate-600">{SAFETY_HINT[v]}</span></span></label>))}</div>
-              <p className="mt-2 text-xs text-slate-600">Klasifikasi administratif untuk menentukan ruang lingkup penggunaan — bukan sertifikasi keselamatan. Hanya gerakan terbit berkategori solo pemula yang dapat membuka Practice Studio.</p>
+              <p className="mt-2 text-xs text-slate-600">Klasifikasi administratif untuk menentukan ruang lingkup penggunaan, bukan sertifikasi keselamatan. Hanya gerakan terbit berkategori solo pemula yang dapat membuka Practice Studio.</p>
             </fieldset>
             <div className="grid gap-4 sm:grid-cols-2">
               <Field id="prerequisites" label={`Prasyarat${solo ? "" : " (opsional)"}`} required={solo}><textarea id="prerequisites" rows={3} value={f.prerequisites} disabled={dis} onChange={(e) => set("prerequisites", e.target.value)} className={inputCls} /></Field>
@@ -228,7 +232,7 @@ export function MovementWorkspace({ initial, initialHistory }: { initial: Studio
             <Field id="source_url" label="Tautan sumber (opsional)"><input id="source_url" type="url" value={f.source_url} disabled={dis} onChange={(e) => set("source_url", e.target.value)} className={inputCls} placeholder="https://" /></Field>
             <div className="grid gap-4 sm:grid-cols-2">
               <Field id="rights_holder" label="Pemegang hak" required><input id="rights_holder" value={f.rights_holder} disabled={dis} maxLength={300} onChange={(e) => set("rights_holder", e.target.value)} className={inputCls} /></Field>
-              <Field id="license_type" label="Jenis izin" required><select id="license_type" value={f.license_type} disabled={dis} onChange={(e) => set("license_type", e.target.value as LicenseType | "")} className={inputCls}><option value="">— pilih —</option>{Object.entries(LICENSE_LABEL).map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select></Field>
+              <Field id="license_type" label="Jenis izin" required><select id="license_type" value={f.license_type} disabled={dis} onChange={(e) => set("license_type", e.target.value as LicenseType | "")} className={inputCls}><option value="">Pilih</option>{Object.entries(LICENSE_LABEL).map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select></Field>
             </div>
             <Field id="usage_scope" label="Ruang lingkup penggunaan yang diizinkan" required><textarea id="usage_scope" rows={2} value={f.usage_scope} disabled={dis} onChange={(e) => set("usage_scope", e.target.value)} className={inputCls} /></Field>
             <label className="flex items-start gap-2 text-sm"><input type="checkbox" checked={f.author_declaration} disabled={dis} onChange={(e) => set("author_declaration", e.target.checked)} className="mt-1" />

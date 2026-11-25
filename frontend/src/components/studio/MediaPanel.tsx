@@ -10,7 +10,7 @@ import type { StudioMedia } from "@/lib/types";
 import { btnGhost, btnPrimary, Field, inputCls, RefImage } from "./bits";
 
 const ACCESS_LABEL: Record<string, string> = {
-  private: "Privat — pengunggah, penanggung jawab, kurator, admin", reviewers: "Peninjau — semua anggota mitra, kurator, admin", public: "Publik — setelah gerakan terbit",
+  private: "Privat: pengunggah, penanggung jawab, kurator, admin", reviewers: "Peninjau: semua anggota mitra, kurator, admin", public: "Publik: setelah gerakan terbit",
 };
 
 export function MediaPanel({ movementId, canUpload, onCount }: { movementId: string; canUpload: boolean; onCount: (n: number) => void }) {
@@ -67,14 +67,14 @@ export function MediaPanel({ movementId, canUpload, onCount }: { movementId: str
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-slate-600">Media referensi bersifat opsional — dokumentasi teks tanpa media tetap sah. Berkas disimpan privat, tidak pernah lewat tautan publik, dan hanya dapat dibuka lewat otorisasi. Jangan mengunggah rekaman orang lain tanpa izin.</p>
+      <p className="text-sm text-slate-600">Media referensi bersifat opsional, dokumentasi teks tanpa media tetap sah. Berkas disimpan privat, tidak pernah lewat tautan publik, dan hanya dapat dibuka lewat otorisasi. Jangan mengunggah rekaman orang lain tanpa izin.</p>
       {loading ? <p className="text-sm text-slate-600">Memuat…</p> : items.length === 0 ? <p className="text-sm text-slate-600">Belum ada media.</p> : (
         <ul className="space-y-3">{items.map((m) => (
           <li key={m.id} className="rounded-xl border border-line-200 p-4">
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div className="min-w-0">
                 <p className="flex items-center gap-2 font-medium">{m.kind === "video" ? <Film aria-hidden className="h-4 w-4 text-sage-500" /> : <ImageIcon aria-hidden className="h-4 w-4 text-sage-500" />}{m.is_demo ? "[DEMO] " : ""}{m.title}</p>
-                <p className="text-xs text-slate-600">{m.filename} · {formatBytes(m.size_bytes)} · diunggah {m.uploader ?? "—"}</p>
+                <p className="text-xs text-slate-600">{m.filename} · {formatBytes(m.size_bytes)} · diunggah {m.uploader ?? "-"}</p>
               </div>
               <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${CONSENT_TONE[m.consent_status]}`}>{m.consent_label}</span>
             </div>
@@ -118,7 +118,7 @@ export function MediaPanel({ movementId, canUpload, onCount }: { movementId: str
             <Field id="mu-title" label="Judul" required><input id="mu-title" name="title" required maxLength={200} className={inputCls} /></Field>
             <Field id="mu-file" label="Berkas" required><input id="mu-file" ref={fileRef} name="file" type="file" accept="video/mp4,video/webm,image/jpeg,image/png,image/webp" required className={inputCls} /></Field>
             <Field id="mu-holder" label="Pemegang hak" required><input id="mu-holder" name="rights_holder" required maxLength={300} className={inputCls} /></Field>
-            <Field id="mu-lic" label="Jenis izin" required><select id="mu-lic" name="license_type" required defaultValue="" className={inputCls}><option value="" disabled>— pilih —</option>{Object.entries(LICENSE_LABEL).map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select></Field>
+            <Field id="mu-lic" label="Jenis izin" required><select id="mu-lic" name="license_type" required defaultValue="" className={inputCls}><option value="" disabled>Pilih</option>{Object.entries(LICENSE_LABEL).map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select></Field>
             <div className="sm:col-span-2"><Field id="mu-src" label="Sumber media" required hint="Siapa/kapan/di mana direkam atau dibuat."><textarea id="mu-src" name="source_description" required rows={2} className={inputCls} /></Field></div>
             <div className="sm:col-span-2"><Field id="mu-scope" label="Lingkup penggunaan yang diizinkan" required><textarea id="mu-scope" name="usage_scope" required rows={2} className={inputCls} /></Field></div>
             <Field id="mu-ret" label="Simpan hingga (opsional)" hint="Berkas dihapus setelah tanggal ini."><input id="mu-ret" name="retention_until" type="date" className={inputCls} /></Field>

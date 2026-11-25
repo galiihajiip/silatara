@@ -38,7 +38,7 @@ export function LessonLinks({ movementId, linked, onChange, canEdit }: { movemen
         <div className="flex flex-wrap items-end gap-3">
           <div className="min-w-[16rem] flex-1"><label htmlFor="lesson-pick" className="mb-1 block text-sm font-medium">Tautkan ke pelajaran</label>
             <select id="lesson-pick" defaultValue="" onChange={(e) => { if (e.target.value) { void toggle(e.target.value, true); e.target.value = ""; } }} className="w-full rounded-xl border border-line-200 bg-paper-50 px-3 py-2.5">
-              <option value="">— pilih pelajaran (draf) —</option>{free.map((o) => <option key={o.id} value={o.id}>{o.course_title} › {o.title}{o.status !== "draft" ? ` (${o.status})` : ""}</option>)}</select></div>
+              <option value="">Pilih pelajaran (draf)</option>{free.map((o) => <option key={o.id} value={o.id}>{o.course_title} › {o.title}{o.status !== "draft" ? ` (${o.status})` : ""}</option>)}</select></div>
         </div>)}
       {canEdit && options.length === 0 && <p className="text-xs text-slate-600">Tidak ada pelajaran milik mitra dan tradisi yang sama yang dapat ditautkan. Buat kurikulum dan pelajaran di <Link className="underline" href="/app/manage/courses">Kelola Konten</Link> terlebih dahulu.</p>}
       <p className="text-xs text-slate-600">Pelajaran yang sudah diajukan/terbit harus ditarik ke draf sebelum tautan gerakannya diubah. Practice Studio hanya terbuka bila gerakan terbit dengan kategori solo pemula.</p>

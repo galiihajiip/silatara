@@ -159,7 +159,7 @@ export function PartnerWorkspace({ initial, initialHistory, traditions, viewerRo
         {can && traditionOptions.length > 0 && (
           <div className="flex flex-wrap items-end gap-3">
             <Field id="add-trad" label="Tambah tradisi (yang sudah terbit)"><select id="add-trad" defaultValue="" className={inputCls} onChange={(e) => { if (e.target.value) { void call("tr", "PUT", `/studio/partners/${d.id}/traditions/${e.target.value}`, undefined, "Tradisi ditambahkan."); e.target.value = ""; } }}>
-              <option value="">— pilih tradisi —</option>{traditionOptions.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}</select></Field>
+              <option value="">Pilih tradisi</option>{traditionOptions.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}</select></Field>
           </div>)}
       </Section>
 
@@ -185,7 +185,7 @@ export function PartnerWorkspace({ initial, initialHistory, traditions, viewerRo
         {history.length === 0 ? <p className="text-sm text-slate-600">Belum ada riwayat.</p> : (
           <ol className="space-y-3 text-sm">{history.map((e, i) => (
             <li key={i} className="border-l-2 border-line-200 pl-3"><p className="font-medium">{PARTNER_ACTION_LABEL[e.action] ?? actionLabel("partner." + e.action)}{e.from_status ? <span className="font-normal text-slate-600"> · {e.from_status} → {e.to_status}</span> : null}</p>
-              <p className="text-slate-600">{e.actor ?? "—"} · {formatDateTime(e.created_at)}</p>
+              <p className="text-slate-600">{e.actor ?? "-"} · {formatDateTime(e.created_at)}</p>
               {e.note && <p>Catatan: {e.note}</p>}{e.evidence_ref && <p>Bukti: {e.evidence_ref}</p>}</li>))}</ol>)}
       </Section>
     </div>
