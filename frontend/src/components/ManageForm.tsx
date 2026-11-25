@@ -46,7 +46,7 @@ function RefSelect({ f, value, onChange, role, courseId, disabled }: {
   return (
     <>
       <select id={f.name} className={cls} value={value} disabled={disabled} onChange={(e) => onChange(e.target.value)} required={f.required}>
-        <option value="">{f.required ? "— pilih —" : "— tidak ada —"}</option>
+        <option value="">{f.required ? "Pilih" : "Tidak ada"}</option>
         {opts.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
       </select>
       {err && <p className="mt-1 text-sm text-clay-600">Gagal memuat pilihan: {err}</p>}
