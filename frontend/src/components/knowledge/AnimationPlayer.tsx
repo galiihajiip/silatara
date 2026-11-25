@@ -11,7 +11,17 @@ const subscribeRM = (cb: () => void) => { const m = window.matchMedia(RM); m.add
  * kecepatannya: animasi SMIL dijeda lalu waktunya dimajukan manual sesuai kecepatan. Hormati prefers-reduced-motion
  * (mulai dalam keadaan jeda). Berkas berasal dari server sendiri dan divalidasi tanpa skrip (tools/animation).
  */
-export function AnimationPlayer({ src, title, compact = false }: { src: string; title: string; compact?: boolean }) {
+export function AnimationPlayer({
+  src,
+  title,
+  compact = false,
+  variant = "default",
+}: {
+  src: string;
+  title: string;
+  compact?: boolean;
+  variant?: "default" | "hero";
+}) {
   const host = useRef<HTMLDivElement>(null);
   const [markup, setMarkup] = useState<string | null>(null);
   const [failed, setFailed] = useState(false);
@@ -49,27 +59,53 @@ export function AnimationPlayer({ src, title, compact = false }: { src: string; 
     return () => cancelAnimationFrame(raf);
   }, [markup, playing, speed]);
 
+  const hero = variant === "hero";
   if (failed) {
     return (
-      // eslint-disable-next-line @next/next/no-img-element -- cadangan bila SVG tidak dapat disisipkan
-      <img src={src} alt={`Animasi ${title}`} width={360} height={440} className="h-auto w-full rounded-xl border border-line-200 bg-paper-50" />
+      <div className={hero ? "flex justify-center rounded-[20px] border border-slate-200/80 bg-parchment-100/50 p-6" : ""}>
+        {/* eslint-disable-next-line @next/next/no-img-element -- cadangan bila SVG tidak dapat disisipkan */}
+        <img
+          src={src}
+          alt={`Animasi ${title}`}
+          width={360}
+          height={440}
+          className={hero ? "h-auto w-full max-w-[340px] rounded-xl bg-paper-50" : "h-auto w-full rounded-xl border border-line-200 bg-paper-50"}
+        />
+      </div>
     );
   }
   return (
-    <figure className="overflow-hidden rounded-xl border border-line-200 bg-paper-50">
-      <div ref={host} role="img" aria-label={`Animasi ${title}`} className="aspect-[9/11] w-full"
-        // SVG milik SILATARA (dibuat generator, divalidasi tanpa skrip/URL eksternal)
-        dangerouslySetInnerHTML={markup ? { __html: markup } : undefined} />
+    <figure className={`overflow-hidden border ${hero ? "rounded-[20px] border-slate-200/80 bg-white" : "rounded-xl border-line-200 bg-paper-50"}`}>
+      <div className={hero ? "flex items-center justify-center bg-parchment-100/45 px-4 py-6" : ""}>
+        <div
+          ref={host}
+          role="img"
+          aria-label={`Animasi ${title}`}
+          className={hero ? "aspect-[9/11] w-full max-w-[320px] sm:max-w-[350px]" : "aspect-[9/11] w-full"}
+          // SVG milik SILATARA (dibuat generator, divalidasi tanpa skrip/URL eksternal)
+          dangerouslySetInnerHTML={markup ? { __html: markup } : undefined}
+        />
+      </div>
       {!compact && (
-        <figcaption className="flex items-center justify-between gap-2 border-t border-line-200 px-3 py-2">
-          <button type="button" onClick={() => setPlaying((p) => !p)} aria-pressed={!playing}
-            className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-sm font-medium text-forest-900 hover:bg-parchment-100">
-            {playing ? <Pause aria-hidden className="h-4 w-4" /> : <Play aria-hidden className="h-4 w-4" />}{playing ? "Jeda" : "Putar"}
+        <figcaption className={`flex flex-wrap items-center justify-between gap-2 border-t border-line-200 ${hero ? "px-4 py-3 sm:px-5" : "px-3 py-2"}`}>
+          <button
+            type="button"
+            onClick={() => setPlaying((p) => !p)}
+            aria-pressed={!playing}
+            className={`inline-flex items-center gap-1.5 text-sm font-medium text-forest-900 hover:bg-parchment-100 ${hero ? "rounded-full border border-slate-200 px-3.5 py-1.5" : "rounded-lg px-2 py-1"}`}
+          >
+            {playing ? <Pause aria-hidden className="h-4 w-4" /> : <Play aria-hidden className="h-4 w-4" />}
+            {playing ? "Jeda" : "Putar"}
           </button>
           <div role="group" aria-label="Kecepatan animasi" className="flex gap-1">
             {SPEEDS.map((s) => (
-              <button key={s} type="button" onClick={() => { setSpeed(s); setPlaying(true); }} aria-pressed={speed === s}
-                className={`rounded-lg px-2 py-1 text-xs ${speed === s ? "bg-forest-700 text-paper-50" : "text-slate-600 hover:bg-parchment-100"}`}>
+              <button
+                key={s}
+                type="button"
+                onClick={() => { setSpeed(s); setPlaying(true); }}
+                aria-pressed={speed === s}
+                className={`${hero ? "rounded-full px-3 py-1 text-xs font-medium" : "rounded-lg px-2 py-1 text-xs"} ${speed === s ? "bg-forest-700 text-paper-50" : "text-slate-600 hover:bg-parchment-100"}`}
+              >
                 {s.toString().replace(".", ",")}×
               </button>
             ))}
