@@ -23,7 +23,7 @@ export default async function SubmitPlacePage({ searchParams }: { searchParams: 
     <>
       <nav aria-label="Jejak halaman" className="mb-4 text-sm"><Link className="underline" href="/community/peta">Peta</Link> / Kirim informasi</nav>
       <PageHeader eyebrow="Direktori" title={p ? "Kirim koreksi" : "Kirim tempat latihan"}
-        description="Bantu melengkapi direktori pencak silat. Setiap kiriman diperiksa redaksi: kemungkinan duplikasi, sumber, dan ketepatan lokasi. Bila memungkinkan, informasi dikonfirmasi kepada pengelola." />
+        description="Bantu melengkapi direktori pencak silat. Setiap kiriman diperiksa redaksi." />
       <div className="max-w-3xl"><SubmissionForm facets={facets.data} place={p} /></div>
     </>
   );

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ExternalLink, MapPin, Navigation, Pencil } from "lucide-react";
 import { Card, ErrorState, PageHeader } from "@/components/ui";
-import { PlaceMiniMap } from "@/components/directory/PlaceMiniMap";
+import { LazyPlaceMiniMap } from "@/components/LazyClients";
 import { apiGet } from "@/lib/api";
 import { shortRegion, type PlaceDetail } from "@/lib/directory";
 
@@ -39,7 +39,7 @@ export default async function PlacePage({ params }: { params: Promise<{ slug: st
         <div className="space-y-8">
           <section aria-labelledby="lokasi">
             <h2 id="lokasi" className="mb-3 font-serif text-2xl text-forest-900">Lokasi</h2>
-            <PlaceMiniMap lat={p.lat} lng={p.lng} precision={p.precision} label={p.name} />
+            <LazyPlaceMiniMap lat={p.lat} lng={p.lng} precision={p.precision} label={p.name} />
             <dl className="mt-4 grid gap-x-6 gap-y-2 text-sm sm:grid-cols-[10rem_1fr]">
               <dt className="text-slate-600">Wilayah</dt><dd>{where}</dd>
               {p.address && <><dt className="text-slate-600">Alamat</dt><dd>{p.address}</dd></>}
