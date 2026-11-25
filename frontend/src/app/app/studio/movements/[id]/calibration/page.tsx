@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CalibrationWorkspace } from "@/components/CalibrationWorkspace";
+import { LazyCalibrationWorkspace } from "@/components/LazyClients";
 import { ErrorState } from "@/components/ui";
 import { requireUser, sGet } from "@/lib/server-api";
 import type { InstructorAnnotation, StudioMedia, StudioMovement } from "@/lib/types";
@@ -17,7 +17,7 @@ export default async function CalibrationPage({ params, searchParams }: { params
   return (
     <>
       <p className="mb-4 text-sm"><Link href={`/app/studio/movements/${id}`} className="underline">← Kembali ke dokumentasi</Link></p>
-      <CalibrationWorkspace movementId={id} movementName={m.data.active_document?.name_id ?? m.data.name_id} isDemo={m.data.is_demo}
+      <LazyCalibrationWorkspace movementId={id} movementName={m.data.active_document?.name_id ?? m.data.name_id} isDemo={m.data.is_demo}
         media={media.ok ? media.data : []} phases={m.data.active_document?.phases ?? []} initialAnnotations={ann.ok ? ann.data : []}
         viewerId={user.id} viewerRole={user.role} initialSource={sp.fixture ? "fixture" : sp.media} />
     </>
