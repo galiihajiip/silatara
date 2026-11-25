@@ -1,4 +1,4 @@
-/** Validasi form sisi klien (UX). Server tetap memvalidasi ulang — ini bukan batas keamanan. */
+/** Validasi form sisi klien (UX). Server tetap memvalidasi ulang, ini bukan batas keamanan. */
 export type FieldErrors<K extends string> = Partial<Record<K, string>>;
 
 const EMAIL = /^[^@\s]{1,64}@[^@\s]+\.[^@\s]{2,}$/;

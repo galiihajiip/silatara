@@ -1,4 +1,4 @@
-/** 33 landmark MediaPipe Pose (BlazePose) dengan nama Indonesia — hanya label pilihan; bukan klaim biomekanik. */
+/** 33 landmark MediaPipe Pose (BlazePose) dengan nama Indonesia, hanya label pilihan; bukan klaim biomekanik. */
 export const POSE_LANDMARK_NAMES: readonly string[] = [
   "Hidung", "Mata kiri (dalam)", "Mata kiri", "Mata kiri (luar)", "Mata kanan (dalam)", "Mata kanan", "Mata kanan (luar)",
   "Telinga kiri", "Telinga kanan", "Mulut kiri", "Mulut kanan", "Bahu kiri", "Bahu kanan", "Siku kiri", "Siku kanan",

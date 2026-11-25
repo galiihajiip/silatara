@@ -94,7 +94,7 @@ export const SAFETY_CLASS_LABEL: Record<string, string> = {
   supervised_only: "Dengan pengawasan", partner_required: "Butuh pasangan", restricted: "Tidak diuraikan", needs_reference: "Nama jurus",
 };
 export const LEVEL_ID: Record<string, string> = { beginner: "Pemula", intermediate: "Menengah", advanced: "Lanjut" };
-/** Label asal informasi — ditulis untuk pembaca, bukan untuk alur kerja internal. */
+/** Label asal informasi, ditulis untuk pembaca, bukan untuk alur kerja internal. */
 export const BASIS_LABEL: Record<string, string> = {
   source: "Menurut sumber", "source+editorial": "Sumber & catatan redaksi", editorial: "Catatan redaksi",
   editorial_unvalidated: "Saran redaksi", needs_validation: "Tanyakan pelatih", gap: "Tidak dibahas sumber",

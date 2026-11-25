@@ -35,7 +35,7 @@ export function formatMinutes(min: number | null | undefined): string | null {
 }
 
 export function formatDate(iso: string | null | undefined): string {
-  if (!iso) return "—";
+  if (!iso) return "-";
   return new Date(iso).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric", timeZone: "Asia/Jakarta" });
 }
 
@@ -46,7 +46,7 @@ export function paragraphs(text: string | null | undefined): string[] {
 
 /** 125000 ms -> "2 mnt 5 dtk"; di bawah semenit -> "45 dtk". */
 export function formatDuration(ms: number | null | undefined): string {
-  if (ms === null || ms === undefined) return "—";
+  if (ms === null || ms === undefined) return "-";
   const total = Math.round(ms / 1000);
   const m = Math.floor(total / 60), sec = total % 60;
   return m ? `${m} mnt ${sec} dtk` : `${sec} dtk`;
@@ -56,7 +56,7 @@ export function formatClock(ms: number): string {
   return `${String(Math.floor(t / 60)).padStart(2, "0")}:${String(t % 60).padStart(2, "0")}`;
 }
 export function formatDateTime(iso: string | null | undefined): string {
-  if (!iso) return "—";
+  if (!iso) return "-";
   return new Date(iso).toLocaleString("id-ID", { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit", timeZone: "Asia/Jakarta" });
 }
 export const PRACTICE_STATUS_LABEL: Record<string, string> = {
@@ -78,7 +78,7 @@ export const LICENSE_LABEL: Record<string, string> = {
   instructor_owned: "Milik instruktur", partner_permission: "Izin dari mitra", other_written_permission: "Izin tertulis pihak lain",
 };
 export const PARTNER_STATUS_LABEL: Record<string, string> = {
-  draft: "Draf — belum diajukan", pending_verification: "Menunggu verifikasi admin", verified: "Terverifikasi",
+  draft: "Draf: belum diajukan", pending_verification: "Menunggu verifikasi admin", verified: "Terverifikasi",
   rejected: "Ditolak", suspended: "Ditangguhkan",
 };
 export const PARTNER_ACTION_LABEL: Record<string, string> = {
@@ -122,4 +122,4 @@ export const PROGRAM_ACTION_LABEL: Record<string, string> = {
 export const COHORT_STATUS_LABEL: Record<string, string> = { draft: "Draf", open: "Terbuka untuk undangan", closed: "Ditutup", completed: "Selesai" };
 export const INVITE_STATUS_LABEL: Record<string, string> = { pending: "Menunggu", accepted: "Diterima", revoked: "Dicabut", expired: "Kedaluwarsa" };
 export const SURVEY_KIND_LABEL: Record<string, string> = { baseline: "Survei awal (baseline)", endline: "Survei akhir (endline)", feedback_learner: "Umpan balik peserta", feedback_instructor: "Umpan balik instruktur" };
-export function formatPct(v: number | null | undefined): string { return v === null || v === undefined ? "—" : `${Math.round(v * 100)}%`; }
+export function formatPct(v: number | null | undefined): string { return v === null || v === undefined ? "-" : `${Math.round(v * 100)}%`; }
