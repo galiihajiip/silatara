@@ -12,7 +12,7 @@ export function BrandLogo({ size = 40, href = "/", priority = false, className =
     <Image src="/brand/silatara-logo-full.png" alt="SILATARA" width={934} height={245} priority={priority}
       style={{ height: size, width: "auto" }} className={`object-contain ${className}`} />
   );
-  return href ? <Link href={href} aria-label="SILATARA — beranda" className="inline-flex items-center">{img}</Link> : <span className="inline-flex items-center">{img}</span>;
+  return href ? <Link href={href} aria-label="SILATARA: beranda" className="inline-flex items-center">{img}</Link> : <span className="inline-flex items-center">{img}</span>;
 }
 
 /** Penanda memuat bermerek (menggantikan spinner generik). */

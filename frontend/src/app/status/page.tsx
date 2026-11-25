@@ -1,7 +1,7 @@
 import { apiGet } from "@/lib/api";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Status sistem — SILATARA" };
+export const metadata = { title: "Status sistem | SILATARA" };
 
 type Live = { status: string; service: string; version: string; env: string };
 type Ready = { status: string; database: string; migration_revision: string };
@@ -38,7 +38,7 @@ export default async function StatusPage() {
         {trad.ok && trad.data.items.length === 0 && <p className="text-slate-600">Belum ada tradisi yang disetujui. Ini wajar pada tahap awal.</p>}
         {trad.ok && trad.data.items.map((t) => (
           <p key={t.slug} className="rounded-xl border border-line-200 bg-paper-50 px-4 py-3">
-            {t.name} {t.provenance.is_demo && <span className="ml-2 rounded-full bg-bronze-500/15 px-2 py-0.5 text-xs text-ink-950">DEMO — bukan data autentik</span>}
+            {t.name} {t.provenance.is_demo && <span className="ml-2 rounded-full bg-bronze-500/15 px-2 py-0.5 text-xs text-ink-950">DEMO: bukan data autentik</span>}
           </p>
         ))}
         {!trad.ok && <p className="text-clay-600">Gagal memuat: {trad.error}</p>}
