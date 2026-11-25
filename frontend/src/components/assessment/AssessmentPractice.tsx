@@ -17,9 +17,9 @@ import { drawSkeleton, fitVideoBox, LandmarkSmoother, type DrawCtx, type Size } 
 import { WorkerLandmarkerAdapter } from "@/features/practice/worker-adapter";
 
 type Step = "intro" | "starting" | "positioning" | "countdown" | "recording" | "analyzing" | "result" | "error";
-const btn = "inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-medium disabled:opacity-60";
-const primary = `${btn} bg-forest-700 text-paper-50 hover:bg-forest-900`;
-const secondary = `${btn} border border-line-200 bg-paper-50 hover:bg-parchment-100`;
+const btn = "inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-50";
+const primary = `${btn} bg-gradient-to-r from-[#4a0d0d] via-[#7c1d1d] to-[#c2410c] text-white shadow-sm shadow-orange-950/15 hover:from-[#3a0808] hover:to-[#9a3412]`;
+const secondary = `${btn} border border-slate-200 bg-white text-slate-700 shadow-xs hover:border-[#fed7aa] hover:bg-[#fffaf5] hover:text-[#6d1b11]`;
 const MIN_RECORD_S = 3;
 
 export function AssessmentPractice({ protocol, movementTitle, loggedIn, lessonRef, createAdapter }: {
@@ -223,20 +223,56 @@ export function AssessmentPractice({ protocol, movementTitle, loggedIn, lessonRe
   // ---------------------------------------------------------------- tampilan
   if (step === "intro" || step === "error") {
     return (
-      <section aria-labelledby="mulai" className="space-y-4 rounded-2xl border border-line-200 bg-paper-50 p-5" data-testid="assess" data-step={step}>
-        <h2 id="mulai" className="flex items-center gap-2 font-serif text-2xl text-forest-900"><ShieldCheck aria-hidden className="h-5 w-5 text-forest-700" />Sebelum mencoba</h2>
-        {message && <p role="alert" className="flex items-start gap-2 rounded-xl border border-clay-600/40 bg-clay-600/5 p-3 text-sm"><AlertTriangle aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-clay-600" />{message}</p>}
-        <ul className="list-disc space-y-1 pl-5 text-sm text-slate-600">
-          {protocol.body_positioning.map((b) => <li key={b}>{b}</li>)}
-          <li>Kamera hanya menyala setelah Anda setuju dan <strong>dapat dihentikan kapan saja</strong>. Mikrofon tidak digunakan.</li>
-          <li>Gambar diproses <strong>di perangkat Anda</strong>. Video dan posisi tubuh tidak direkam atau dikirim. Data gerak dihapus dari memori setelah skor dihitung.</li>
-          <li>Hentikan latihan bila terasa nyeri atau tidak nyaman.</li>
+      <section aria-labelledby="mulai" className="space-y-4 rounded-[24px] border border-[#e7d7c8] bg-white p-5 shadow-xs sm:p-6" data-testid="assess" data-step={step}>
+        <div className="flex items-center gap-3">
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl border border-[#fed7aa]/80 bg-[#fff6ee] text-[#6d1b11]">
+            <ShieldCheck aria-hidden className="h-5 w-5" />
+          </span>
+          <div>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-[#9a3412]">Persiapan &amp; Privasi</p>
+            <h2 id="mulai" className="font-serif text-xl text-[#2e0909] sm:text-2xl">Sebelum mencoba</h2>
+          </div>
+        </div>
+
+        {message && (
+          <p role="alert" className="flex items-start gap-2.5 rounded-2xl border border-red-200 bg-red-50/80 p-3 text-sm text-red-900">
+            <AlertTriangle aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-red-600" />
+            <span>{message}</span>
+          </p>
+        )}
+
+        <ul className="grid gap-2 text-xs leading-relaxed text-slate-600 sm:grid-cols-2 sm:text-sm">
+          {protocol.body_positioning.map((b) => (
+            <li key={b} className="flex items-start gap-2.5 rounded-xl border border-slate-100 bg-slate-50/60 px-3 py-2">
+              <span aria-hidden className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#c2410c]" />
+              <span>{b}</span>
+            </li>
+          ))}
+          <li className="flex items-start gap-2.5 rounded-xl border border-slate-100 bg-slate-50/60 px-3 py-2">
+            <span aria-hidden className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#9a3412]" />
+            <span>Kamera hanya menyala setelah Anda setuju dan <strong className="font-semibold text-slate-800">dapat dihentikan kapan saja</strong>. Mikrofon tidak digunakan.</span>
+          </li>
+          <li className="flex items-start gap-2.5 rounded-xl border border-slate-100 bg-slate-50/60 px-3 py-2">
+            <span aria-hidden className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#9a3412]" />
+            <span>Gambar diproses <strong className="font-semibold text-slate-800">di perangkat Anda</strong>. Video dan posisi tubuh tidak direkam atau dikirim. Data gerak dihapus dari memori setelah skor dihitung.</span>
+          </li>
+          <li className="flex items-start gap-2.5 rounded-xl border border-slate-100 bg-slate-50/60 px-3 py-2">
+            <span aria-hidden className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-600" />
+            <span>Hentikan latihan bila terasa nyeri atau tidak nyaman.</span>
+          </li>
         </ul>
-        <label className="flex items-start gap-3 text-sm">
-          <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-1 h-4 w-4" />
-          <span>Saya memahami hal di atas dan <strong>setuju kamera dinyalakan</strong> untuk latihan {movementTitle}.</span>
+
+        <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-[#fed7aa] bg-[#fffaf5] px-4 py-3 text-xs leading-relaxed text-slate-700 transition-colors hover:border-[#f59e0b]/60 sm:text-sm">
+          <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-0.5 h-4 w-4 shrink-0 rounded accent-[#7c1d1d]" />
+          <span>Saya memahami hal di atas dan <strong className="font-semibold text-[#2e0909]">setuju kamera dinyalakan</strong> untuk latihan {movementTitle}.</span>
         </label>
-        <button onClick={() => void start()} disabled={!consent} className={primary}><Camera aria-hidden className="h-4 w-4" />Coba Latihan Sekarang</button>
+
+        <div>
+          <button onClick={() => void start()} disabled={!consent} className={primary}>
+            <Camera aria-hidden className="h-4 w-4" />
+            Coba Latihan Sekarang
+          </button>
+        </div>
       </section>
     );
   }
@@ -245,27 +281,42 @@ export function AssessmentPractice({ protocol, movementTitle, loggedIn, lessonRe
     saveBreakdown={saveBreakdown} setSaveBreakdown={setSaveBreakdown} saved={saved} onSave={() => void save()} />;
 
   return (
-    <section aria-label="Latihan kamera" className="space-y-3" data-testid="assess" data-step={step}>
+    <section aria-label="Latihan kamera" className="space-y-4" data-testid="assess" data-step={step}>
       <div ref={stageRef} className="w-full">
-        <div className="relative mx-auto overflow-hidden rounded-2xl bg-ink-950" style={{ width: box.width, height: box.height }}>
+        <div className="relative mx-auto overflow-hidden rounded-[24px] border border-slate-200/80 bg-[#1a0505] shadow-md" style={{ width: box.width, height: box.height }}>
           <video ref={videoRef} playsInline muted className="absolute inset-0 h-full w-full object-contain" style={{ transform: mirror ? "scaleX(-1)" : undefined }} />
           <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" aria-hidden />
-          <div aria-live="polite" className="absolute inset-x-0 top-0 bg-ink-950/60 p-2 text-center text-sm text-paper-50">
-            {step === "starting" && "Menyalakan kamera dan memuat model deteksi…"}
-            {step === "positioning" && posMsg}
-            {step === "countdown" && `Bersiap… ${count}`}
-            {step === "recording" && `Lakukan gerakan: ${protocol.phases.map((p) => p.label).join(" → ")} · ${Math.floor(elapsed)} dtk`}
-            {step === "analyzing" && "Menganalisis gerakan…"}
+          <div className="pointer-events-none absolute inset-x-3 top-3 flex justify-center">
+            <div aria-live="polite" className="rounded-full border border-white/15 bg-[#1a0505]/75 px-4 py-1.5 text-center text-xs font-medium text-white shadow-sm backdrop-blur-md sm:text-sm">
+              {step === "starting" && "Menyalakan kamera dan memuat model deteksi…"}
+              {step === "positioning" && posMsg}
+              {step === "countdown" && `Bersiap… ${count}`}
+              {step === "recording" && `Lakukan gerakan: ${protocol.phases.map((p) => p.label).join(" → ")} · ${Math.floor(elapsed)} dtk`}
+              {step === "analyzing" && "Menganalisis gerakan…"}
+            </div>
           </div>
-          {step === "countdown" && <div className="absolute inset-0 grid place-items-center font-serif text-8xl text-paper-50">{count}</div>}
+          {step === "countdown" && (
+            <div className="absolute inset-0 grid place-items-center bg-[#1a0505]/25 font-serif text-8xl font-bold text-white drop-shadow-md">
+              {count}
+            </div>
+          )}
         </div>
       </div>
-      <div className="flex flex-wrap items-center justify-center gap-2">
+      <div className="flex flex-wrap items-center justify-center gap-2.5">
         {step === "recording" && (
-          <button onClick={() => void finish()} disabled={elapsed < MIN_RECORD_S} className={primary}><Square aria-hidden className="h-4 w-4" />Selesai, nilai gerakan</button>
+          <button onClick={() => void finish()} disabled={elapsed < MIN_RECORD_S} className={primary}>
+            <Square aria-hidden className="h-4 w-4" />
+            Selesai, nilai gerakan
+          </button>
         )}
-        <button onClick={() => void stopAll()} className={secondary}><CameraOff aria-hidden className="h-4 w-4" />Hentikan kamera</button>
-        <label className="inline-flex items-center gap-2 text-sm"><input type="checkbox" checked={mirror} onChange={(e) => setMirror(e.target.checked)} />Tampilan cermin</label>
+        <button onClick={() => void stopAll()} className={secondary}>
+          <CameraOff aria-hidden className="h-4 w-4" />
+          Hentikan kamera
+        </button>
+        <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-xs transition-colors hover:border-[#fed7aa] hover:bg-[#fffaf5]">
+          <input type="checkbox" checked={mirror} onChange={(e) => setMirror(e.target.checked)} className="h-4 w-4 accent-[#7c1d1d]" />
+          Tampilan cermin
+        </label>
       </div>
     </section>
   );
@@ -277,80 +328,133 @@ function ResultView({ result, protocol, loggedIn, onRetry, saveBreakdown, setSav
 }) {
   if (result.status === "not_assessable") {
     return (
-      <section className="space-y-4 rounded-2xl border border-line-200 bg-paper-50 p-5" data-testid="assess" data-step="result" data-status="not_assessable">
-        <h2 className="font-serif text-2xl text-forest-900">Gerakan belum dapat dinilai</h2>
-        <p>{result.message}</p>
-        <p className="text-sm text-slate-600">Kualitas masukan: {Math.round(result.input_quality * 100)}%. Skor tidak diberikan agar tidak menyesatkan.</p>
-        <button onClick={onRetry} className={primary}><RotateCcw aria-hidden className="h-4 w-4" />Coba lagi</button>
+      <section className="space-y-4 rounded-[24px] border border-[#e7d7c8] bg-white p-6 shadow-xs sm:p-7" data-testid="assess" data-step="result" data-status="not_assessable">
+        <div className="flex items-center gap-3">
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl border border-amber-200 bg-amber-50 text-amber-700">
+            <AlertTriangle aria-hidden className="h-5 w-5" />
+          </span>
+          <h2 className="font-serif text-2xl text-[#2e0909]">Gerakan belum dapat dinilai</h2>
+        </div>
+        <p className="text-slate-700">{result.message}</p>
+        <p className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-600">
+          Kualitas masukan: {Math.round(result.input_quality * 100)}%. Skor tidak diberikan agar tidak menyesatkan.
+        </p>
+        <div>
+          <button onClick={onRetry} className={primary}>
+            <RotateCcw aria-hidden className="h-4 w-4" />
+            Coba lagi
+          </button>
+        </div>
       </section>
     );
   }
-  const tone = result.total_score >= 80 ? "text-forest-700" : result.total_score >= 50 ? "text-bronze-700" : "text-clay-600";
-  const fmt = (v: number | null, unit: string) => (v === null ? "—" : unit === "deg" ? `${Math.round(v)}°` : v.toFixed(2).replace(".", ","));
+  const tone = result.total_score >= 80 ? "text-[#6d1b11]" : result.total_score >= 50 ? "text-[#9a3412]" : "text-red-700";
+  const fmt = (v: number | null, unit: string) => (v === null ? "-" : unit === "deg" ? `${Math.round(v)}°` : v.toFixed(2).replace(".", ","));
   const fmtT = (t: number | [number, number], unit: string) => (Array.isArray(t) ? `${fmt(t[0], unit)}–${fmt(t[1], unit)}` : fmt(t, unit));
   return (
     <section className="space-y-6" data-testid="assess" data-step="result" data-status="scored">
-      <div className="grid gap-4 rounded-2xl border border-line-200 bg-paper-50 p-5 sm:grid-cols-[auto_1fr] sm:items-center">
-        <div className="text-center">
-          <p className="text-sm text-slate-600">Skor kesesuaian</p>
-          <p className={`font-serif text-6xl ${tone}`} data-testid="total-score">{result.total_score}</p>
-          <p className="text-xs text-slate-600">dari 100</p>
+      <div className="grid gap-5 rounded-[24px] border border-[#e7d7c8] bg-white p-6 shadow-xs sm:grid-cols-[auto_1fr] sm:items-center">
+        <div className="rounded-2xl border border-[#fed7aa] bg-[#fff6ee] px-6 py-5 text-center">
+          <p className="text-xs font-semibold uppercase tracking-wider text-[#9a3412]">Skor kesesuaian</p>
+          <p className={`mt-1 font-serif text-6xl font-semibold ${tone}`} data-testid="total-score">{result.total_score}</p>
+          <p className="mt-1 text-xs text-slate-600">dari 100</p>
         </div>
-        <div className="space-y-2">
-          <h2 className="font-serif text-2xl text-forest-900">Saran perbaikan</h2>
-          <ol className="list-decimal space-y-1 pl-5">{result.suggestions.map((s) => <li key={s}>{s}</li>)}</ol>
-          <p className="text-xs text-slate-600">
-            {result.best_phase && <>Fase terbaik: <strong>{result.best_phase}</strong>. </>}
-            {result.weakest_phase && <>Perlu diperbaiki: <strong>{result.weakest_phase}</strong>. </>}
+        <div className="space-y-2.5">
+          <h2 className="font-serif text-2xl text-[#2e0909]">Saran perbaikan</h2>
+          <ol className="list-decimal space-y-1.5 pl-5 text-sm leading-relaxed text-slate-700">
+            {result.suggestions.map((s) => <li key={s}>{s}</li>)}
+          </ol>
+          <p className="text-xs text-slate-500">
+            {result.best_phase && <>Fase terbaik: <strong className="text-slate-700">{result.best_phase}</strong>. </>}
+            {result.weakest_phase && <>Perlu diperbaiki: <strong className="text-slate-700">{result.weakest_phase}</strong>. </>}
             Kualitas masukan {Math.round(result.input_quality * 100)}% · {result.frames_analyzed} frame · {result.duration_s.toString().replace(".", ",")} dtk.
           </p>
         </div>
       </div>
 
-      <div className="overflow-x-auto rounded-2xl border border-line-200 bg-paper-50">
+      <div className="overflow-x-auto rounded-[24px] border border-slate-200/80 bg-white shadow-xs">
         <table className="w-full min-w-[34rem] text-sm">
-          <caption className="p-3 text-left font-semibold">Rincian per kriteria</caption>
-          <thead className="text-left text-slate-600"><tr><th className="p-3">Kriteria</th><th className="p-3">Panduan</th><th className="p-3">Terukur</th><th className="p-3">Bobot</th><th className="p-3">Skor</th></tr></thead>
+          <caption className="border-b border-slate-100 px-5 py-3.5 text-left font-serif text-base font-semibold text-[#2e0909]">
+            Rincian per kriteria
+          </caption>
+          <thead className="bg-slate-50/70 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+            <tr>
+              <th className="px-5 py-3">Kriteria</th>
+              <th className="px-4 py-3">Panduan</th>
+              <th className="px-4 py-3">Terukur</th>
+              <th className="px-4 py-3">Bobot</th>
+              <th className="px-5 py-3">Skor</th>
+            </tr>
+          </thead>
           <tbody>
             {result.criteria.map((c) => (
-              <tr key={c.id} className="border-t border-line-200">
-                <td className="p-3">
-                  <span className="flex items-center gap-2">{c.status === "ok" ? <CheckCircle2 aria-hidden className="h-4 w-4 text-forest-700" /> : c.status === "unmeasured" ? <CircleDashed aria-hidden className="h-4 w-4 text-slate-600" /> : <AlertTriangle aria-hidden className="h-4 w-4 text-bronze-700" />}{c.label}</span>
-                  <span className="block text-xs text-slate-600">{c.feedback}</span>
+              <tr key={c.id} className="border-t border-slate-100">
+                <td className="px-5 py-3.5">
+                  <span className="flex items-center gap-2 font-medium text-slate-800">
+                    {c.status === "ok" ? (
+                      <CheckCircle2 aria-hidden className="h-4 w-4 shrink-0 text-[#6d1b11]" />
+                    ) : c.status === "unmeasured" ? (
+                      <CircleDashed aria-hidden className="h-4 w-4 shrink-0 text-slate-400" />
+                    ) : (
+                      <AlertTriangle aria-hidden className="h-4 w-4 shrink-0 text-amber-600" />
+                    )}
+                    {c.label}
+                  </span>
+                  <span className="mt-0.5 block pl-6 text-xs text-slate-500">{c.feedback}</span>
                 </td>
-                <td className="p-3 tabular-nums">{fmtT(c.target, c.unit)} (±{fmt(c.tolerance, c.unit)})</td>
-                <td className="p-3 tabular-nums">{fmt(c.actual, c.unit)}</td>
-                <td className="p-3 tabular-nums">{c.weight}</td>
-                <td className="p-3 tabular-nums">{c.score ?? "tidak terukur"}</td>
+                <td className="px-4 py-3.5 tabular-nums text-slate-700">{fmtT(c.target, c.unit)} (±{fmt(c.tolerance, c.unit)})</td>
+                <td className="px-4 py-3.5 tabular-nums text-slate-700">{fmt(c.actual, c.unit)}</td>
+                <td className="px-4 py-3.5 tabular-nums text-slate-600">{c.weight}</td>
+                <td className="px-5 py-3.5 font-semibold tabular-nums text-[#2e0909]">{c.score ?? "tidak terukur"}</td>
               </tr>
             ))}
-            <tr className="border-t border-line-200"><td className="p-3">Kelengkapan fase</td><td className="p-3" colSpan={2}>{result.phases.filter((p) => p.detected).length}/{result.phases.length} fase terlihat</td><td className="p-3">{protocol.phase_completion_weight}</td><td className="p-3" /></tr>
+            <tr className="border-t border-slate-100 bg-slate-50/40">
+              <td className="px-5 py-3.5 font-medium text-slate-800">Kelengkapan fase</td>
+              <td className="px-4 py-3.5 text-slate-700" colSpan={2}>{result.phases.filter((p) => p.detected).length}/{result.phases.length} fase terlihat</td>
+              <td className="px-4 py-3.5 tabular-nums text-slate-600">{protocol.phase_completion_weight}</td>
+              <td className="px-5 py-3.5" />
+            </tr>
           </tbody>
         </table>
       </div>
 
-      <div className="flex flex-wrap gap-2 text-sm">
+      <div className="flex flex-wrap gap-2 text-xs sm:text-sm">
         {result.phases.map((p) => (
-          <span key={p.keyframe} className={`rounded-full border px-3 py-1 ${p.detected ? "border-forest-700/40" : "border-clay-600/40 text-clay-600"}`}>
+          <span
+            key={p.keyframe}
+            className={`rounded-full border px-3.5 py-1.5 font-medium ${
+              p.detected
+                ? "border-[#fed7aa] bg-[#fff6ee] text-[#6d1b11]"
+                : "border-red-200 bg-red-50/70 text-red-700"
+            }`}
+          >
             {p.label}: {p.detected ? (p.score !== null ? `${p.score}` : "terlihat") : "belum terlihat"}{p.tempo_ratio ? ` · tempo ${p.tempo_ratio.toString().replace(".", ",")}×` : ""}
           </span>
         ))}
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
-        <button onClick={onRetry} className={primary}><RotateCcw aria-hidden className="h-4 w-4" />Coba lagi</button>
+        <button onClick={onRetry} className={primary}>
+          <RotateCcw aria-hidden className="h-4 w-4" />
+          Coba lagi
+        </button>
         {loggedIn ? (
           <>
-            <label className="inline-flex items-center gap-2 text-sm"><input type="checkbox" checked={saveBreakdown} onChange={(e) => setSaveBreakdown(e.target.checked)} />Simpan juga rincian per kriteria</label>
-            <button onClick={onSave} disabled={saved === "saving" || saved === "saved"} className={secondary}>{saved === "saved" ? "Tersimpan di riwayat" : saved === "saving" ? "Menyimpan…" : "Simpan ke riwayat"}</button>
-            {saved === "saved" && <Link className="text-sm underline" href="/app/latihan/riwayat">Lihat riwayat</Link>}
-            {saved === "error" && <span role="alert" className="text-sm text-clay-600">Gagal menyimpan. Coba lagi.</span>}
+            <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 shadow-xs">
+              <input type="checkbox" checked={saveBreakdown} onChange={(e) => setSaveBreakdown(e.target.checked)} className="h-4 w-4 accent-[#7c1d1d]" />
+              Simpan juga rincian per kriteria
+            </label>
+            <button onClick={onSave} disabled={saved === "saving" || saved === "saved"} className={secondary}>
+              {saved === "saved" ? "Tersimpan di riwayat" : saved === "saving" ? "Menyimpan…" : "Simpan ke riwayat"}
+            </button>
+            {saved === "saved" && <Link className="text-sm font-medium text-[#6d1b11] underline" href="/app/latihan/riwayat">Lihat riwayat</Link>}
+            {saved === "error" && <span role="alert" className="text-sm font-medium text-red-700">Gagal menyimpan. Coba lagi.</span>}
           </>
         ) : (
-          <p className="text-sm text-slate-600"><Link className="underline" href="/masuk">Masuk</Link> untuk menyimpan riwayat dan melihat perkembangan Anda.</p>
+          <p className="text-sm text-slate-600"><Link className="font-medium text-[#6d1b11] underline" href="/masuk">Masuk</Link> untuk menyimpan riwayat dan melihat perkembangan Anda.</p>
         )}
       </div>
-      <p className="text-xs text-slate-600">{protocol.disclaimer} Protokol {result.protocol_version} · mesin {result.engine_version}.</p>
+      <p className="text-xs text-slate-500">{protocol.disclaimer} Protokol {result.protocol_version} · mesin {result.engine_version}.</p>
     </section>
   );
 }
