@@ -55,8 +55,54 @@
   --color-ember-700: #9a3412;
   --color-gold-400: #fbbf24;
   --font-sans: var(--font-plus-jakarta), system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-cms: var(--font-roboto), system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-serif: var(--font-plus-jakarta), system-ui, sans-serif;  /* judul halaman memakai sans tebal seperti landing; Cinzel hanya untuk aksen merek */
   --font-cinzel: var(--font-cinzel-face), serif;
+}
+
+/* Kawung batik: watermark sangat halus (opacity 0.025) hanya untuk kanvas halaman, bukan kartu/navbar/footer */
+:root {
+  --batik-kawung: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cg fill='none' stroke='%234a120b' stroke-width='1.2' stroke-opacity='0.025'%3E%3Cellipse cx='24' cy='12' rx='6' ry='11'/%3E%3Cellipse cx='24' cy='36' rx='6' ry='11'/%3E%3Cellipse cx='12' cy='24' rx='11' ry='6'/%3E%3Cellipse cx='36' cy='24' rx='11' ry='6'/%3E%3Cellipse cx='0' cy='24' rx='11' ry='6'/%3E%3Cellipse cx='48' cy='24' rx='11' ry='6'/%3E%3Cellipse cx='24' cy='0' rx='6' ry='11'/%3E%3Cellipse cx='24' cy='48' rx='6' ry='11'/%3E%3C/g%3E%3Cg fill='%234a120b' fill-opacity='0.025'%3E%3Ccircle cx='24' cy='24' r='2'/%3E%3Ccircle cx='0' cy='0' r='2'/%3E%3Ccircle cx='48' cy='0' r='2'/%3E%3Ccircle cx='0' cy='48' r='2'/%3E%3Ccircle cx='48' cy='48' r='2'/%3E%3C/g%3E%3C/svg%3E");
+  --batik-kawung-opacity: 0.025;
+}
+
+.font-cms {
+  font-family: var(--font-cms);
+}
+
+/* Subtle Kawung geometric repeating batik motif background across SILATARA.
+   Rendered via ::before pseudo-element so it never conflicts with any
+   child element's own background-image (gradients, solid fills, etc.). */
+.bg-batik-kawung {
+  position: relative;
+}
+.bg-batik-kawung::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: var(--batik-kawung);
+  background-repeat: repeat;
+  background-size: 48px 48px;
+}
+
+[data-cms-shell] {
+  font-family: var(--font-cms);
+  background-color: #F4F5F7;
+  background-image: var(--batik-kawung);
+  background-repeat: repeat;
+  background-size: 48px 48px;
+}
+
+[data-cms-shell] .font-serif {
+  font-family: var(--font-cms);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+[data-cms-shell] form[role="search"] {
+  margin-bottom: 0;
 }
 
 /* Martial Arts & Silat Perguruan Prestigious Display Font */
@@ -72,19 +118,115 @@
 }
 
 html {
-  background: #f8fafc;
+  background-color: #f8fafc;
   color: #0f172a;
   font-family: var(--font-sans);
   scroll-behavior: smooth;
+}
+
+/* Lenis smooth-scroll integration: disable native CSS smooth-scroll while Lenis owns scrolling */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: clip;
 }
 
 body {
   font-family: var(--font-sans);
   line-height: 1.6;
   background-color: #f8fafc;
+  background-image: var(--batik-kawung);
+  background-repeat: repeat;
+  background-size: 48px 48px;
   color: #0f172a;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Pastikan kanvas ruang kerja / latihan (#F4F5F7) menutup penuh hingga dasar layar dengan tekstur batik Kawung halus */
+html:has([data-cms-shell]),
+body:has([data-cms-shell]) {
+  background-color: #F4F5F7;
+}
+
+/* Kanvas beranda memakai permukaan Ivory #FFF8EE menyatu dengan header; halaman autentikasi memakai permukaan bersih #FFFBF5 */
+html:has([data-landing-page]),
+body:has([data-landing-page]) {
+  background-color: #FFF8EE;
+}
+
+html:has([data-auth-page]),
+body:has([data-auth-page]) {
+  background-color: #FFFBF5;
+}
+
+body:has([data-landing-page]),
+body:has([data-auth-page]) {
+  background-image: none;
+}
+
+body:has([data-landing-page])::before,
+body:has([data-auth-page])::before {
+  display: none;
+}
+
+/* Satu lapisan batik saja: kanvas /app/** memakai [data-cms-shell], bukan body */
+body:has([data-cms-shell]) {
+  background-image: none;
+}
+
+body:has([data-cms-shell]) > footer,
+body:has([data-auth-page]) > header[data-site-header],
+body:has([data-auth-page]) > footer[data-site-footer] {
+  display: none;
+}
+
+/* Eksklusikan navbar dan footer situs agar bebas dari corak batik */
+header[data-site-header],
+[data-site-header],
+footer[data-site-footer],
+[data-site-footer] {
+  background-image: none !important;
+}
+
+/* Unified, sleek warm maroon/bronze scrollbars across root document & inner scroll containers */
+:root,
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(109, 27, 17, 0.25) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(109, 27, 17, 0.22);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(109, 27, 17, 0.42);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
 }
 
 :focus-visible {
@@ -172,6 +314,323 @@ body {
 .animate-cloud-mist {
   animation: cloudBob 8s ease-in-out infinite;
   will-change: transform;
+}
+
+/* =========================================================================
+   SUNSET CLOUDS HERO, SUBTLE AIRY LATE-AFTERNOON DRIFT
+   Gentle, wide-period cloud drift (automatically disabled under reduced motion)
+   ========================================================================= */
+@keyframes sunsetCloudDriftLeft {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(26px, -6px, 0);
+  }
+}
+
+@keyframes sunsetCloudDriftRight {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(-28px, -7px, 0);
+  }
+}
+
+@keyframes sunsetCloudDriftMid {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(18px, -4px, 0);
+  }
+}
+
+@keyframes sunsetGlowPulse {
+  0%, 100% {
+    opacity: 0.85;
+    transform: translateX(-50%) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.04);
+  }
+}
+
+.sunset-cloud-drift-left {
+  animation: sunsetCloudDriftLeft 24s ease-in-out infinite;
+  will-change: transform;
+}
+
+.sunset-cloud-drift-right {
+  animation: sunsetCloudDriftRight 28s ease-in-out infinite;
+  will-change: transform;
+}
+
+.sunset-cloud-drift-mid {
+  animation: sunsetCloudDriftMid 32s ease-in-out infinite -6s;
+  will-change: transform;
+}
+
+.sunset-glow-pulse {
+  animation: sunsetGlowPulse 14s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes heroStarTwinkle {
+  0%, 100% {
+    opacity: 0.48;
+    transform: scale(0.88);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+
+.hero-star-twinkle-a {
+  animation: heroStarTwinkle 3.8s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.hero-star-twinkle-b {
+  animation: heroStarTwinkle 4.9s ease-in-out infinite -1.7s;
+  will-change: transform, opacity;
+}
+
+.hero-star-twinkle-c {
+  animation: heroStarTwinkle 6.1s ease-in-out infinite -3.2s;
+  will-change: transform, opacity;
+}
+
+@keyframes heroMeteorStreakA {
+  0% {
+    opacity: 0;
+    transform: translate3d(-44px, -18px, 0) scale(0.82);
+  }
+  8% {
+    opacity: 0.92;
+  }
+  26% {
+    opacity: 0.85;
+    transform: translate3d(120px, 46px, 0) scale(1);
+  }
+  34%, 100% {
+    opacity: 0;
+    transform: translate3d(172px, 66px, 0) scale(0.95);
+  }
+}
+
+@keyframes heroMeteorStreakB {
+  0% {
+    opacity: 0;
+    transform: translate3d(42px, -16px, 0) scale(0.82);
+  }
+  8% {
+    opacity: 0.88;
+  }
+  26% {
+    opacity: 0.8;
+    transform: translate3d(-112px, 44px, 0) scale(1);
+  }
+  34%, 100% {
+    opacity: 0;
+    transform: translate3d(-160px, 62px, 0) scale(0.94);
+  }
+}
+
+@keyframes heroSkyBirdGlideA {
+  0% {
+    opacity: 0;
+    transform: translate3d(-36px, 10px, 0) scale(0.92);
+  }
+  12% {
+    opacity: 0.9;
+  }
+  50% {
+    opacity: 0.95;
+    transform: translate3d(96px, -10px, 0) scale(1);
+  }
+  88% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(210px, -2px, 0) scale(0.9);
+  }
+}
+
+@keyframes heroSkyBirdGlideB {
+  0% {
+    opacity: 0;
+    transform: translate3d(34px, 8px, 0) scale(0.9);
+  }
+  14% {
+    opacity: 0.85;
+  }
+  52% {
+    opacity: 0.9;
+    transform: translate3d(-88px, -10px, 0) scale(0.98);
+  }
+  88% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(-196px, 0px, 0) scale(0.88);
+  }
+}
+
+@keyframes heroBirdFlap {
+  0%, 100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(0.66) translateY(-1.2px);
+  }
+}
+
+.hero-meteor-streak-a {
+  animation: heroMeteorStreakA 8.5s cubic-bezier(0.22, 0.61, 0.36, 1) infinite -1.2s;
+  will-change: transform, opacity;
+}
+
+.hero-meteor-streak-b {
+  animation: heroMeteorStreakB 10.5s cubic-bezier(0.22, 0.61, 0.36, 1) infinite -5.1s;
+  will-change: transform, opacity;
+}
+
+.hero-sky-bird-a {
+  animation: heroSkyBirdGlideA 22s ease-in-out infinite -7s;
+  will-change: transform, opacity;
+}
+
+.hero-sky-bird-b {
+  animation: heroSkyBirdGlideB 26s ease-in-out infinite -11s;
+  will-change: transform, opacity;
+}
+
+.hero-bird-flap {
+  animation: heroBirdFlap 1.65s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* =========================================================================
+   HERO SILATARA LOGO & KINETIC HEADLINE EFFECTS (Golden Halo, Float, Shimmer)
+   (All disabled automatically under prefers-reduced-motion: reduce)
+   ========================================================================= */
+@keyframes heroLogoFloat {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -7px, 0);
+  }
+}
+
+@keyframes heroLogoHaloPulse {
+  0%, 100% {
+    opacity: 0.72;
+    transform: scale(0.97);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+}
+
+@keyframes heroGoldSweep {
+  0% {
+    transform: translateX(-140%) skewX(-22deg);
+  }
+  42%, 100% {
+    transform: translateX(240%) skewX(-22deg);
+  }
+}
+
+@keyframes heroHeadlineShimmer {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.hero-logo-float {
+  animation: heroLogoFloat 5.6s ease-in-out infinite;
+  will-change: transform;
+}
+
+.hero-logo-halo {
+  animation: heroLogoHaloPulse 6.5s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.hero-gold-sweep {
+  animation: heroGoldSweep 4.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  will-change: transform;
+}
+
+@keyframes heroWordRise {
+  0% {
+    opacity: 0.01;
+    transform: translate3d(0, 102%, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes heroFadeUp {
+  0% {
+    opacity: 0.01;
+    transform: translate3d(0, 16px, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes heroRuleSweep {
+  0% {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+.hero-word-rise {
+  animation: heroWordRise 0.68s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hero-fade-up {
+  animation: heroFadeUp 0.68s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hero-rule-sweep {
+  animation: heroRuleSweep 0.78s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hero-headline-shimmer {
+  background-image: linear-gradient(
+    105deg,
+    #3B0D0C 0%,
+    #7C1D1D 20%,
+    #C2410C 40%,
+    #F59E0B 52%,
+    #D97706 62%,
+    #C2410C 76%,
+    #3B0D0C 100%
+  );
+  background-size: 230% auto;
+  animation: heroHeadlineShimmer 7s ease-in-out infinite;
 }
 
 /* =========================================================================
@@ -430,20 +889,23 @@ body[data-scroll-dir="up"] .scroll-reveal:not(.is-revealed) {
   box-shadow: 0 20px 40px -12px rgba(234, 88, 12, 0.15), 0 8px 16px -6px rgba(0, 0, 0, 0.04);
 }
 
-/* Page Open Entrance Animation */
+/* Page Open Entrance Animation
+   Note: ends at transform: none so <main> does not retain a permanent GPU
+   compositor transform layer on tall pages (which breaks sticky positioning
+   and causes software-compositor blank tiles in Chromium). */
 @keyframes pageFadeInUp {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: none;
   }
 }
 
 .animate-page-entrance {
-  animation: pageFadeInUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: pageFadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 
