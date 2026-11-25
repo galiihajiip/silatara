@@ -7,7 +7,7 @@ import { clientRequest } from "@/lib/client-api";
 import { COHORT_STATUS_LABEL, formatDate, formatDateTime, PROGRAM_ACTION_LABEL, SURVEY_KIND_LABEL } from "@/lib/format";
 import { describeError } from "@/lib/studio-api";
 import type { CohortOut, ProgramAction, ProgramAnalytics, ProgramDetail, Role, StudioPartnerDetail, SurveyOut } from "@/lib/types";
-import { AnalyticsPanel } from "./AnalyticsPanel";
+import { LazyAnalyticsPanel } from "@/components/LazyClients";
 
 type Msg = { kind: "success" | "error"; text: string } | null;
 const KINDS = ["baseline", "endline", "feedback_learner", "feedback_instructor"] as const;
@@ -67,7 +67,7 @@ export function ProgramWorkspace({ initial, surveys: initSurveys, analytics, ana
     await call<{ delivery: Record<string, number> }>("announce", "POST", `/pilot/programs/${p.id}/announcements`, body, "Pengumuman dibuat.", (d) => {
       formEl.reset(); void reload();
       const q = Object.entries(d.delivery).map(([k, v]) => `${v} ${k}`).join(", ");
-      setMsg({ kind: "success", text: `Pengumuman dibuat. Notifikasi email diantrekan (${q || "tidak ada penerima"}) — status "pending" berarti BELUM terkirim; pengiriman oleh worker sesuai provider email yang dikonfigurasi.` });
+      setMsg({ kind: "success", text: `Pengumuman dibuat. Notifikasi email diantrekan (${q || "tidak ada penerima"}), status "pending" berarti BELUM terkirim; pengiriman oleh worker sesuai provider email yang dikonfigurasi.` });
     });
   }
   const reloadSurveys = () => clientRequest<SurveyOut[]>("GET", `/pilot/programs/${p.id}/surveys`).then((r) => { if (r.ok) setSurveys(r.data); });
@@ -111,7 +111,7 @@ export function ProgramWorkspace({ initial, surveys: initSurveys, analytics, ana
           <Field id="ps" label="Mulai"><input id="ps" name="start_date" type="date" defaultValue={p.start_date ?? ""} disabled={!editable} className={inputCls} /></Field>
           <Field id="pe" label="Selesai"><input id="pe" name="end_date" type="date" defaultValue={p.end_date ?? ""} disabled={!editable} className={inputCls} /></Field>
           <Field id="pc" label="Kapasitas program"><input id="pc" name="capacity" type="number" min={1} defaultValue={p.capacity} disabled={!editable} className={inputCls} /></Field>
-          <Field id="pr" label="Instruktur penanggung jawab"><select id="pr" name="responsible_user_id" defaultValue={p.responsible_user_id ?? ""} disabled={!editable} className={inputCls}><option value="">— pilih —</option>{members.map((m) => <option key={m.user_id} value={m.user_id}>{m.name}</option>)}</select></Field>
+          <Field id="pr" label="Instruktur penanggung jawab"><select id="pr" name="responsible_user_id" defaultValue={p.responsible_user_id ?? ""} disabled={!editable} className={inputCls}><option value="">Pilih</option>{members.map((m) => <option key={m.user_id} value={m.user_id}>{m.name}</option>)}</select></Field>
           {editable && <div className="sm:col-span-2"><button disabled={!!busy} className={btnPrimary}>{busy === "save" ? "Menyimpan…" : "Simpan"}</button></div>}
         </form>
       </Section>
@@ -120,14 +120,14 @@ export function ProgramWorkspace({ initial, surveys: initSurveys, analytics, ana
         {p.cohorts.length === 0 ? <p className="text-sm text-slate-600">Belum ada cohort.</p> : (
           <ul className="divide-y divide-line-200 rounded-xl border border-line-200">{p.cohorts.map((c) => (
             <li key={c.id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 text-sm">
-              <span><Link className="font-medium underline" href={`/app/pilot/manage/cohorts/${c.id}`}>{c.name}</Link><span className="block text-slate-600">{c.course_title} · instruktur {c.instructor ?? "—"}</span></span>
+              <span><Link className="font-medium underline" href={`/app/pilot/manage/cohorts/${c.id}`}>{c.name}</Link><span className="block text-slate-600">{c.course_title} · instruktur {c.instructor ?? "-"}</span></span>
               <span className="text-slate-600">{COHORT_STATUS_LABEL[c.status]} · {c.member_count}/{c.capacity}</span></li>))}</ul>)}
         {!["completed", "cancelled", "archived"].includes(p.status) && (
           <form onSubmit={addCohort} className="grid gap-3 rounded-xl border border-line-200 bg-parchment-100/50 p-4 sm:grid-cols-2">
             <h3 className="font-medium sm:col-span-2">Tambah cohort</h3>
             <Field id="cn" label="Nama cohort" required><input id="cn" name="name" required className={inputCls} /></Field>
-            <Field id="cc" label="Kurikulum (terbit milik mitra)" required><select id="cc" name="course_id" required defaultValue="" className={inputCls}><option value="" disabled>— pilih —</option>{partnerCourses.map((c) => <option key={c.id} value={c.id}>{c.title}</option>)}</select></Field>
-            <Field id="ci" label="Instruktur cohort"><select id="ci" name="instructor_user_id" defaultValue="" className={inputCls}><option value="">— belum ditetapkan —</option>{members.map((m) => <option key={m.user_id} value={m.user_id}>{m.name}</option>)}</select></Field>
+            <Field id="cc" label="Kurikulum (terbit milik mitra)" required><select id="cc" name="course_id" required defaultValue="" className={inputCls}><option value="" disabled>Pilih</option>{partnerCourses.map((c) => <option key={c.id} value={c.id}>{c.title}</option>)}</select></Field>
+            <Field id="ci" label="Instruktur cohort"><select id="ci" name="instructor_user_id" defaultValue="" className={inputCls}><option value="">Belum ditetapkan</option>{members.map((m) => <option key={m.user_id} value={m.user_id}>{m.name}</option>)}</select></Field>
             <Field id="ck" label="Kapasitas"><input id="ck" name="capacity" type="number" min={1} defaultValue={30} className={inputCls} /></Field>
             <Field id="cs" label="Mulai"><input id="cs" name="start_date" type="date" className={inputCls} /></Field>
             <Field id="ce" label="Selesai"><input id="ce" name="end_date" type="date" className={inputCls} /></Field>
@@ -159,7 +159,7 @@ export function ProgramWorkspace({ initial, surveys: initSurveys, analytics, ana
       </Section>
 
       <Section id="analytics" title="Analytics dan laporan" description="Penggunaan, survei, dan catatan instruktur dipisahkan. Aktivitas bukan penguasaan teknik.">
-        <AnalyticsPanel programId={p.id} initial={analytics} initialError={analyticsError} cohorts={p.cohorts} />
+        <LazyAnalyticsPanel programId={p.id} initial={analytics} initialError={analyticsError} cohorts={p.cohorts} />
       </Section>
 
       <Section id="privasi" title="Data dan retensi" description="Detail: docs/PILOT_PRIVACY_RETENTION.md">

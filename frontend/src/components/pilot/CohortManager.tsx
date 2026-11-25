@@ -65,11 +65,11 @@ export function CohortManager({ initial, dashboard: initDash, notes: initNotes }
       <Notice kind={msg?.kind ?? null}>{msg?.text}</Notice>
 
       <Section id="ringkasan" title="Peserta dan aktivitas" description={d.disclaimer}>
-        <dl className="grid gap-4 sm:grid-cols-4 text-sm">
-          <div><dt className="text-slate-600">Peserta aktif</dt><dd className="font-serif text-2xl">{d.summary.members}</dd></div>
-          <div><dt className="text-slate-600">Belum memulai</dt><dd className="font-serif text-2xl">{d.summary.not_started}</dd></div>
-          <div><dt className="text-slate-600">Perlu perhatian</dt><dd className="font-serif text-2xl">{d.summary.needs_attention}</dd></div>
-          <div><dt className="text-slate-600">Menyelesaikan semua pelajaran</dt><dd className="font-serif text-2xl">{d.summary.completed_all}</dd></div>
+        <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 text-sm">
+          <div className="rounded-2xl border border-slate-200/80 bg-[#F4F5F7] p-4"><dt className="text-xs font-medium text-slate-500">Peserta aktif</dt><dd className="mt-1 text-2xl font-bold tabular-nums text-forest-900">{d.summary.members}</dd></div>
+          <div className="rounded-2xl border border-slate-200/80 bg-[#F4F5F7] p-4"><dt className="text-xs font-medium text-slate-500">Belum memulai</dt><dd className="mt-1 text-2xl font-bold tabular-nums text-forest-900">{d.summary.not_started}</dd></div>
+          <div className="rounded-2xl border border-orange-200/80 bg-parchment-100 p-4"><dt className="text-xs font-medium text-bronze-700">Perlu perhatian</dt><dd className="mt-1 text-2xl font-bold tabular-nums text-clay-600">{d.summary.needs_attention}</dd></div>
+          <div className="rounded-2xl border border-slate-200/80 bg-[#F4F5F7] p-4"><dt className="text-xs font-medium text-slate-500">Selesai semua</dt><dd className="mt-1 text-2xl font-bold tabular-nums text-forest-900">{d.summary.completed_all}</dd></div>
         </dl>
         <p className="text-xs text-slate-600">&ldquo;Perlu perhatian&rdquo; = belum memulai ≥ {d.thresholds.no_start_days} hari sejak bergabung, atau tanpa aktivitas ≥ {d.thresholds.inactive_days} hari padahal belum selesai (program berjalan). Ini sinyal untuk menghubungi peserta, bukan penilaian.</p>
         {d.participants.length === 0 ? <p className="text-sm text-slate-600">Belum ada peserta.</p> : (
@@ -125,7 +125,7 @@ export function CohortManager({ initial, dashboard: initDash, notes: initNotes }
       <Section id="catatan" title="Catatan instruktur (privat)" description="Terpisah dari analytics: tidak masuk laporan atau ekspor, dan dihapus saat retensi berakhir.">
         {notes.length > 0 && <ul className="space-y-2">{notes.map((n) => <li key={n.id} className="rounded-xl border border-line-200 px-4 py-2 text-sm"><span className="font-medium">{n.participant}</span> <span className="text-slate-600">· {formatDateTime(n.created_at)}</span><p className="mt-1 whitespace-pre-line">{n.note}</p></li>)}</ul>}
         <form onSubmit={addNote} className="grid gap-3 sm:grid-cols-[14rem_1fr_auto] sm:items-end">
-          <Field id="np" label="Peserta"><select id="np" name="p" required defaultValue="" className={inputCls}><option value="" disabled>— pilih —</option>{d.participants.map((p) => <option key={p.user_id} value={p.user_id}>{p.name}</option>)}</select></Field>
+          <Field id="np" label="Peserta"><select id="np" name="p" required defaultValue="" className={inputCls}><option value="" disabled>Pilih</option>{d.participants.map((p) => <option key={p.user_id} value={p.user_id}>{p.name}</option>)}</select></Field>
           <Field id="nn" label="Catatan"><input id="nn" name="note" required maxLength={4000} className={inputCls} /></Field>
           <button disabled={busy} className={btnGhost}>Simpan</button>
         </form>

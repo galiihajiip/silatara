@@ -13,7 +13,7 @@ function Bar({ value, label, max = 1 }: { value: number | null; label: string; m
     <div role="img" aria-label={`${label}: ${value === null ? "disembunyikan" : value}`} className="flex items-center gap-3 text-sm">
       <span className="w-40 shrink-0 truncate text-slate-600">{label}</span>
       <span className="h-3 flex-1 overflow-hidden rounded-full bg-line-200"><span className="block h-full bg-forest-700" style={{ width: `${pct}%` }} /></span>
-      <span className="w-12 text-right tabular-nums">{value === null ? "—" : max === 1 ? formatPct(value) : value}</span>
+      <span className="w-12 text-right tabular-nums">{value === null ? "-" : max === 1 ? formatPct(value) : value}</span>
     </div>
   );
 }
@@ -66,7 +66,7 @@ export function AnalyticsPanel({ programId, initial, initialError, cohorts }: { 
                   <div className="mt-3 space-y-2">
                     <Bar value={u.completion_rate} label="Penyelesaian pelajaran" />
                     <Bar value={u.active_rate ?? null} label="Peserta aktif" />
-                    <p className="text-sm text-slate-600">Sesi latihan: {u.practice?.sessions} (selesai {u.practice?.by_status.completed ?? 0}, ditinggalkan {u.practice?.by_status.abandoned ?? 0}) · {u.practice?.active_minutes} menit aktif · rata-rata {u.practice?.sessions_per_active_participant ?? "—"} sesi per peserta aktif</p>
+                    <p className="text-sm text-slate-600">Sesi latihan: {u.practice?.sessions} (selesai {u.practice?.by_status.completed ?? 0}, ditinggalkan {u.practice?.by_status.abandoned ?? 0}) · {u.practice?.active_minutes} menit aktif · rata-rata {u.practice?.sessions_per_active_participant ?? "-"} sesi per peserta aktif</p>
                   </div>)}</div>))}</div>
             <h4 className="mb-2 mt-6 font-medium">Retensi mingguan</h4>
             {a.usage.retention.map((r) => { const name = a.usage.cohorts.find((c) => c.cohort_id === r.cohort_id)?.cohort_name; return (
