@@ -1,7 +1,7 @@
 import { POSE_BODY_CONNECTIONS } from "@/features/practice/skeleton";
 import { syntheticStandingPose } from "@/features/practice/synthetic-pose";
 
-/** Visualisasi kerangka SINTETIS (dibuat kode) — bukan rekaman manusia dan bukan gerakan pencak silat. */
+/** Visualisasi kerangka SINTETIS (dibuat kode), bukan rekaman manusia dan bukan gerakan pencak silat. */
 export function SkeletonDemo() {
   const lm = syntheticStandingPose({ t: 900 }).landmarks;
   const P = (i: number) => ({ x: lm[i].x * 400, y: lm[i].y * 500 });
