@@ -13,9 +13,9 @@ import type { TraditionDetail } from "@/lib/types";
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const k = await apiGet<KTradition>(`/research/traditions/${encodeURIComponent(slug)}`);
-  if (k.ok) return { title: `${k.data.name} — Jelajahi Warisan`, description: k.data.public_summary.slice(0, 160), alternates: { canonical: `/heritage/${slug}` } };
+  if (k.ok) return { title: `${k.data.name} | Jelajahi Warisan`, description: k.data.public_summary.slice(0, 160), alternates: { canonical: `/heritage/${slug}` } };
   const r = await sGet<TraditionDetail>(`/traditions/${encodeURIComponent(slug)}`);
-  return { title: r.ok ? `${r.data.name} — Jelajahi Warisan` : "Tradisi", alternates: { canonical: `/heritage/${slug}` } };
+  return { title: r.ok ? `${r.data.name} | Jelajahi Warisan` : "Tradisi", alternates: { canonical: `/heritage/${slug}` } };
 }
 
 export default async function TraditionPage({ params }: { params: Promise<{ slug: string }> }) {
