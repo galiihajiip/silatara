@@ -1,22 +1,26 @@
-import { BrandLogo } from "@/components/Brand";
-import { AppNav } from "@/components/AppNav";
+import { RoleIconRail } from "@/components/AppNav";
 import { currentPath, requireUser } from "@/lib/server-api";
-import { ROLE_LABEL } from "@/lib/format";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   // Proteksi di server: tanpa sesi valid -> redirect ke /masuk. (Backend tetap memeriksa tiap API.)
   const path = await currentPath();
   const user = await requireUser(path);
+
   // Layar studio latihan: fokus penuh, tanpa sidebar, agar area video menjadi elemen utama.
-  if (/\/lessons\/[^/?]+\/practice(\?|$)/.test(path)) return <div data-focus-layout>{children}</div>;
+  if (/\/lessons\/[^/?]+\/practice(\?|$)/.test(path)) {
+    return (
+      <div data-fullbleed data-cms-shell data-focus-layout className="flex-1 bg-[#F4F5F7] bg-batik-kawung text-slate-900">
+        <div className="mx-auto max-w-[1440px] px-4 pb-8 pt-4 sm:px-6 lg:px-8">{children}</div>
+      </div>
+    );
+  }
+
   return (
-    <div className="grid gap-8 lg:grid-cols-[14rem_1fr]">
-      <aside className="min-w-0 lg:sticky lg:top-6 lg:self-start">
-        <div className="mb-4 hidden lg:block"><BrandLogo size={34} /></div>
-        <p className="mb-3 text-sm text-slate-600"><span className="font-medium text-ink-950">{user.display_name}</span><br />{ROLE_LABEL[user.role]}</p>
-        <AppNav role={user.role} />
-      </aside>
-      <div className="min-w-0">{children}</div>
+    <div data-fullbleed data-cms-shell className="flex-1 bg-[#F4F5F7] bg-batik-kawung text-slate-900">
+      <div className="mx-auto flex max-w-[1440px] items-start gap-6 px-4 pb-24 pt-4 sm:px-6 md:pb-10 lg:px-8">
+        <RoleIconRail role={user.role} />
+        <div className="min-w-0 flex-1">{children}</div>
+      </div>
     </div>
   );
 }
