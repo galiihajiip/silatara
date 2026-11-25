@@ -1,20 +1,21 @@
-import React from "react";
+import React, { useId } from "react";
 
 /**
  * Authentic Indonesian Pencak Silat Cultural Motifs
  * Re-imagined in Royal Maroon, Chocolate Bronze & Warm Orange/Gold Palette
- * - Kawung (Empat Penjuru Mata Angin & Kesimbangan Silat)
+ * - Kawung (Empat Penjuru Mata Angin & Keseimbangan Silat)
  * - Tumpal / Pucuk Rebung (Keteguhan & Ketajaman Pendekar)
  * - Songket Tenun Nusantara (Tenun Sabuk & Samping Tradisi)
  */
 
 export function SilatPatternKawung({
   className = "text-[#381a0e]",
-  opacity = 0.05,
+  opacity = 0.03,
 }: {
   className?: string;
   opacity?: number;
 }) {
+  const patternId = `silat-kawung-${useId().replace(/:/g, "")}`;
   return (
     <svg
       aria-hidden="true"
@@ -24,7 +25,7 @@ export function SilatPatternKawung({
     >
       <defs>
         <pattern
-          id="silat-kawung-pattern"
+          id={patternId}
           width="48"
           height="48"
           patternUnits="userSpaceOnUse"
@@ -68,36 +69,11 @@ export function SilatPatternKawung({
           />
 
           {/* Corner quarter motifs */}
-          <circle
-            cx="24"
-            cy="24"
-            r="2"
-            fill="currentColor"
-          />
-          <circle
-            cx="0"
-            cy="0"
-            r="2"
-            fill="currentColor"
-          />
-          <circle
-            cx="48"
-            cy="0"
-            r="2"
-            fill="currentColor"
-          />
-          <circle
-            cx="0"
-            cy="48"
-            r="2"
-            fill="currentColor"
-          />
-          <circle
-            cx="48"
-            cy="48"
-            r="2"
-            fill="currentColor"
-          />
+          <circle cx="24" cy="24" r="2" fill="currentColor" />
+          <circle cx="0" cy="0" r="2" fill="currentColor" />
+          <circle cx="48" cy="0" r="2" fill="currentColor" />
+          <circle cx="0" cy="48" r="2" fill="currentColor" />
+          <circle cx="48" cy="48" r="2" fill="currentColor" />
 
           {/* Radiating corner petals */}
           <ellipse
@@ -138,7 +114,7 @@ export function SilatPatternKawung({
           />
         </pattern>
       </defs>
-      <rect width="100%" height="100%" fill="url(#silat-kawung-pattern)" />
+      <rect width="100%" height="100%" fill={`url(#${patternId})`} />
     </svg>
   );
 }
@@ -150,6 +126,7 @@ export function SilatPatternTumpal({
   className?: string;
   opacity?: number;
 }) {
+  const patternId = `silat-tumpal-${useId().replace(/:/g, "")}`;
   return (
     <svg
       aria-hidden="true"
@@ -159,7 +136,7 @@ export function SilatPatternTumpal({
     >
       <defs>
         <pattern
-          id="silat-tumpal-pattern"
+          id={patternId}
           width="40"
           height="40"
           patternUnits="userSpaceOnUse"
@@ -185,7 +162,7 @@ export function SilatPatternTumpal({
           />
         </pattern>
       </defs>
-      <rect width="100%" height="100%" fill="url(#silat-tumpal-pattern)" />
+      <rect width="100%" height="100%" fill={`url(#${patternId})`} />
     </svg>
   );
 }
@@ -197,7 +174,10 @@ export function SilatMotifRibbon({
 }) {
   // Elegant traditional border divider motif in warm red & amber
   return (
-    <div className={`flex items-center justify-center gap-3 select-none pointer-events-none ${className}`} aria-hidden="true">
+    <div
+      className={`flex items-center justify-center gap-3 select-none pointer-events-none ${className}`}
+      aria-hidden="true"
+    >
       <div className="h-px flex-1 bg-gradient-to-r from-transparent via-amber-600/40 to-transparent" />
       <div className="flex items-center gap-1.5 text-orange-600/70">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
