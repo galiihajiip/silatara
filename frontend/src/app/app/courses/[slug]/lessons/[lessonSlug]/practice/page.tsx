@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PracticeStudio } from "@/components/PracticeStudio";
-import { Card, ErrorState, PageHeader } from "@/components/ui";
+import { BentoCard, CmsPageHeader } from "@/components/cms/Bento";
+import { LazyPracticeStudio } from "@/components/LazyClients";
+import { ErrorState } from "@/components/ui";
 import { requireUser, sGet } from "@/lib/server-api";
 import type { LessonDetail } from "@/lib/types";
 
@@ -20,25 +21,43 @@ export default async function PracticePage({ params, searchParams }: {
   const back = `/app/courses/${slug}/lessons/${lessonSlug}`;
   if (!l.enrolled || !l.practice.available) {
     return (
-      <>
-        <PageHeader eyebrow="Practice Studio" title={l.title} />
-        <Card className="max-w-2xl">
-          <p>{!l.enrolled ? "Daftar ke kurikulum ini terlebih dahulu untuk berlatih." : l.practice.label}</p>
-          <Link className="mt-3 inline-block underline" href={!l.enrolled ? `/academy/courses/${slug}` : back}>{!l.enrolled ? "Buka kurikulum" : "Kembali ke materi"}</Link>
-        </Card>
-      </>
+      <div className="space-y-5">
+        <CmsPageHeader eyebrow="Practice Studio" title={l.title} />
+        <BentoCard className="max-w-2xl">
+          <p className="text-sm text-slate-700">{!l.enrolled ? "Daftar ke kurikulum ini terlebih dahulu untuk berlatih." : l.practice.label}</p>
+          <Link className="mt-3 inline-block text-sm font-medium text-forest-800 underline" href={!l.enrolled ? `/academy/courses/${slug}` : back}>
+            {!l.enrolled ? "Buka kurikulum" : "Kembali ke materi"}
+          </Link>
+        </BentoCard>
+      </div>
     );
   }
   // Mode simulasi (landmark sintetis) hanya bila diaktifkan di server (dev/E2E) DAN diminta lewat ?sim=1. Tidak aktif di produksi.
   const simEnabled = process.env.ENABLE_SYNTHETIC_PRACTICE === "true" && sp.sim === "1";
   const scenario = (SCENARIOS as readonly string[]).includes(sp.scenario ?? "") ? (sp.scenario as (typeof SCENARIOS)[number]) : "cycle";
   return (
-    <>
-      <PageHeader eyebrow="Practice Studio" title="Latihan terpandu kamera"
-        description="Kamera membantu memastikan tubuh Anda terlihat jelas. Studio ini tidak menilai gerakan." />
-      <PracticeStudio synthetic={simEnabled} scenario={scenario}
-        lesson={{ id: l.id, title: l.title, slug: l.slug, courseSlug: slug, courseTitle: l.course.title, isDemo: l.practice.is_demo,
-          practiceLabel: l.practice.label, verificationLabel: l.provenance.verification_label, objective: l.objective, safetyNotes: l.safety_notes }} />
-    </>
+    <div className="space-y-5">
+      <CmsPageHeader
+        eyebrow="Practice Studio"
+        title="Latihan terpandu kamera"
+        description="Memeriksa keterlihatan tubuh Anda di kamera (bukan penilaian gerakan)."
+      />
+      <LazyPracticeStudio
+        synthetic={simEnabled}
+        scenario={scenario}
+        lesson={{
+          id: l.id,
+          title: l.title,
+          slug: l.slug,
+          courseSlug: slug,
+          courseTitle: l.course.title,
+          isDemo: l.practice.is_demo,
+          practiceLabel: l.practice.label,
+          verificationLabel: l.provenance.verification_label,
+          objective: l.objective,
+          safetyNotes: l.safety_notes,
+        }}
+      />
+    </div>
   );
 }
