@@ -1,6 +1,8 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { CheckCircle2, CircleCheck } from "lucide-react";
+import { CMS_BTN_PRIMARY, CMS_BTN_SECONDARY } from "@/components/cms/Bento";
 import { clientRequest } from "@/lib/client-api";
 import { Notice } from "@/components/Notice";
 import type { ProgressUpdate } from "@/lib/types";
@@ -23,8 +25,8 @@ export function LessonActions({ lessonId, courseSlug, enrolled, completed: initi
 
   if (!enrolled) {
     return (
-      <div className="rounded-xl border border-bronze-500/40 bg-bronze-500/10 p-4">
-        <p className="mb-2">Daftar ke kurikulum ini untuk mencatat progres Anda.</p>
+      <div className="rounded-[20px] border border-[#fed7aa] bg-[#fff6ee] p-4">
+        <p className="mb-3 text-sm font-medium text-[#2e0909]">Daftar ke kurikulum ini untuk mencatat progres belajar Anda.</p>
         <EnrollInline slug={courseSlug} />
       </div>
     );
@@ -39,11 +41,20 @@ export function LessonActions({ lessonId, courseSlug, enrolled, completed: initi
     router.refresh();
   }
   return (
-    <div>
-      <button onClick={toggle} disabled={busy} aria-pressed={completed}
-        className={completed ? "rounded-xl border border-forest-700 px-5 py-3 font-medium text-forest-900 hover:bg-parchment-100 disabled:opacity-60"
-          : "rounded-xl bg-forest-700 px-5 py-3 font-medium text-paper-50 hover:bg-forest-900 disabled:opacity-60"}>
-        {busy ? "Menyimpan…" : completed ? "✓ Selesai (klik untuk batalkan)" : "Tandai selesai"}
+    <div className="space-y-2.5">
+      <button
+        type="button"
+        onClick={toggle}
+        disabled={busy}
+        aria-pressed={completed}
+        className={
+          completed
+            ? `${CMS_BTN_SECONDARY} w-full border-[#fed7aa] bg-[#fff6ee] text-[#6d1b11] hover:bg-[#fed7aa]/50`
+            : `${CMS_BTN_PRIMARY} w-full`
+        }
+      >
+        {completed ? <CheckCircle2 aria-hidden className="h-4 w-4 shrink-0" /> : <CircleCheck aria-hidden className="h-4 w-4 shrink-0" />}
+        <span>{busy ? "Menyimpan..." : completed ? "Selesai (klik untuk batalkan)" : "Tandai selesai"}</span>
       </button>
       <Notice kind={msg?.kind ?? null}>{msg?.text}</Notice>
     </div>
@@ -52,14 +63,24 @@ export function LessonActions({ lessonId, courseSlug, enrolled, completed: initi
 
 function EnrollInline({ slug }: { slug: string }) {
   const router = useRouter();
+  const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   return (
-    <>
-      <button className="rounded-xl bg-forest-700 px-4 py-2 font-medium text-paper-50" onClick={async () => {
-        const r = await clientRequest("POST", `/courses/${slug}/enroll`);
-        if (!r.ok) setErr(r.error); else router.refresh();
-      }}>Ikuti kurikulum</button>
+    <div className="space-y-2">
+      <button
+        type="button"
+        disabled={busy}
+        className={`${CMS_BTN_PRIMARY} w-full`}
+        onClick={async () => {
+          setBusy(true);
+          const r = await clientRequest("POST", `/courses/${slug}/enroll`);
+          setBusy(false);
+          if (!r.ok) setErr(r.error); else router.refresh();
+        }}
+      >
+        {busy ? "Mendaftar..." : "Ikuti kurikulum"}
+      </button>
       <Notice kind={err ? "error" : null}>{err}</Notice>
-    </>
+    </div>
   );
 }
