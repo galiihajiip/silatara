@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { CameraCheck } from "@/components/CameraCheck";
-import { PageHeader } from "@/components/ui";
+import { CMS_BTN_SECONDARY, CmsPageHeader } from "@/components/cms/Bento";
+import { LazyCameraCheck } from "@/components/LazyClients";
 import { requireUser } from "@/lib/server-api";
 
 export const metadata = { title: "Uji kamera" };
@@ -8,13 +8,23 @@ export const metadata = { title: "Uji kamera" };
 export default async function CameraCheckPage() {
   await requireUser("/app/practice/camera-check");
   return (
-    <>
-      <PageHeader eyebrow="Pratinjau teknis" title="Uji kamera dan visibilitas tubuh"
-        description="Periksa apakah kamera dan pencahayaan Anda cukup untuk latihan di masa depan. Fitur penilaian gerakan belum tersedia: menunggu rubrik yang disetujui instruktur mitra.">
-        <p className="mt-3 text-sm">Lebih suka tanpa kamera? <Link className="underline" href="/academy">Lanjut belajar lewat pelajaran teks</Link>.</p>
-        <p className="mt-1 text-sm">Pengujian teknis: <Link className="underline" href="/app/practice/benchmark">benchmark mesin landmark</Link>.</p>
-      </PageHeader>
-      <CameraCheck />
-    </>
+    <div className="space-y-6">
+      <CmsPageHeader
+        eyebrow="Persiapan Latihan"
+        title="Uji kamera & keterlihatan tubuh"
+        description="Pastikan pencahayaan cukup dan seluruh tubuh terlihat jelas di layar sebelum mulai berlatih."
+        actions={
+          <>
+            <Link className={CMS_BTN_SECONDARY} href="/app/practice/benchmark">
+              Benchmark mesin
+            </Link>
+            <Link className={CMS_BTN_SECONDARY} href="/academy">
+              Belajar tanpa kamera
+            </Link>
+          </>
+        }
+      />
+      <LazyCameraCheck />
+    </div>
   );
 }
