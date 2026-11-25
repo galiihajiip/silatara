@@ -339,7 +339,7 @@ export function PracticeStudio({ lesson, synthetic = false, scenario = "cycle", 
   return (
     <div data-testid="studio" data-state={state} data-phase={phase} className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
       <div className="min-w-0 space-y-4">
-        {synthetic && <div role="note" className="rounded-xl border border-clay-600/40 bg-clay-600/5 p-3 text-sm"><strong>MODE SIMULASI</strong> — landmark sintetis, bukan tubuh Anda.</div>}
+        {synthetic && <div role="note" className="rounded-xl border border-clay-600/40 bg-clay-600/5 p-3 text-sm"><strong>MODE SIMULASI</strong>: landmark sintetis, bukan tubuh Anda.</div>}
         <div ref={stageRef} className="w-full">
           <div className="relative mx-auto overflow-hidden rounded-2xl bg-ink-950" style={{ width: box.width, height: box.height }} data-testid="stage">
             <video ref={videoRef} muted playsInline aria-label="Pratinjau kamera" className="absolute inset-0 h-full w-full object-fill"
