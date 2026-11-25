@@ -4,7 +4,7 @@ import { CameraController, isStarted } from "@/features/practice/camera";
 import { collectEnv, runBaselineMain, runWorker, summarizeRuns, type BenchEnv, type RunResult } from "@/features/practice/benchmark";
 import { DEFAULT_INFERENCE_CONFIG } from "@/features/practice/config";
 
-const fmt = (n: number | null | undefined, d = 1) => (n === null || n === undefined ? "—" : n.toFixed(d));
+const fmt = (n: number | null | undefined, d = 1) => (n === null || n === undefined ? "-" : n.toFixed(d));
 
 export function BenchmarkRunner() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -73,7 +73,7 @@ export function BenchmarkRunner() {
           <h2 id="hasil" className="font-serif text-xl text-forest-900">Hasil (median antar-run, n={repeats} ulangan, {frames} frame/run)</h2>
           {env && (
             <p className="rounded-lg bg-parchment-100 p-3 text-xs text-slate-600">
-              {env.source.synthetic ? "Sumber SINTETIS (" + env.source.label + "): hanya memvalidasi jalur komputasi — BUKAN benchmark pose manusia." : "Sumber: " + (env.source.label ?? "kamera") + " (kehadiran manusia tidak diverifikasi otomatis)."}
+              {env.source.synthetic ? "Sumber SINTETIS (" + env.source.label + "): hanya memvalidasi jalur komputasi, BUKAN benchmark pose manusia." : "Sumber: " + (env.source.label ?? "kamera") + " (kehadiran manusia tidak diverifikasi otomatis)."}
               {" "}Lingkungan: {env.userAgent}; {env.hardwareConcurrency ?? "?"} thread; RAM ≈{env.deviceMemoryGB ?? "?"} GB; {env.library}; model {env.models.pose} + {env.models.hand}; video {env.video.width}×{env.video.height}; interval {env.config.minIntervalMs} ms; in-flight {env.config.maxInFlight}; tangan {env.config.hands ? "ya" : "tidak"}.
               Angka hanya berlaku untuk perangkat ini pada saat ini; jangan dikutip sebagai FPS produk.
             </p>
@@ -92,14 +92,14 @@ export function BenchmarkRunner() {
                   ["Latensi p95 (ms)", (s: typeof summary[0]) => fmt(s.medianOfRuns.latencyP95Ms)],
                   ["Frame diproses", (s: typeof summary[0]) => fmt(s.medianOfRuns.processed, 0)],
                   ["Frame video dilewati (engine sibuk)", (s: typeof summary[0]) => (s.medianOfRuns.droppedBackpressure === null ? "n/a (memblokir)" : fmt(s.medianOfRuns.droppedBackpressure, 0))],
-                  ["Jeda event-loop terbesar (ms) — blokir main thread", (s: typeof summary[0]) => fmt(s.medianOfRuns.maxLoopLagMs, 0)],
+                  ["Jeda event-loop terbesar (ms): blokir main thread", (s: typeof summary[0]) => fmt(s.medianOfRuns.maxLoopLagMs, 0)],
                   ["Jeda event-loop p95 (ms)", (s: typeof summary[0]) => fmt(s.medianOfRuns.p95LoopLagMs, 0)],
-                  ["Jeda rAF terbesar (ms) — kehalusan visual", (s: typeof summary[0]) => fmt(s.medianOfRuns.maxUiGapMs, 0)],
+                  ["Jeda rAF terbesar (ms): kehalusan visual", (s: typeof summary[0]) => fmt(s.medianOfRuns.maxUiGapMs, 0)],
                   ["Jeda rAF p95 (ms)", (s: typeof summary[0]) => fmt(s.medianOfRuns.p95UiGapMs, 0)],
                   ["Long task (jumlah)", (s: typeof summary[0]) => fmt(s.medianOfRuns.longTasks, 0)],
                 ] as const).map(([name, f]) => (
                   <tr key={name}><th scope="row" className="px-3 py-2 font-normal text-slate-600">{name}</th>
-                    {(["main-thread-baseline", "worker"] as const).map((eng) => { const s = summary.find((x) => x.engine === eng); return <td key={eng} className="px-3 py-2">{s ? f(s) : "—"}</td>; })}</tr>))}
+                    {(["main-thread-baseline", "worker"] as const).map((eng) => { const s = summary.find((x) => x.engine === eng); return <td key={eng} className="px-3 py-2">{s ? f(s) : "-"}</td>; })}</tr>))}
               </tbody>
             </table>
           </div>

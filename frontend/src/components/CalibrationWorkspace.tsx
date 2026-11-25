@@ -207,7 +207,7 @@ export function CalibrationWorkspace({ movementId, movementName, isDemo, media, 
   }
 
   const noBody = frame && frame.poses.length === 0;
-  const overlayLabel = isFixture ? FIXTURE_LABEL : engine === "ready" ? `MediaPipe Pose (${engineInfo?.library ?? "—"}), di Web Worker` : engine === "loading" ? "Memuat model…" : "Overlay belum diaktifkan";
+  const overlayLabel = isFixture ? FIXTURE_LABEL : engine === "ready" ? `MediaPipe Pose (${engineInfo?.library ?? "-"}), di Web Worker` : engine === "loading" ? "Memuat model…" : "Overlay belum diaktifkan";
 
   return (
     <div className="space-y-6">
@@ -215,7 +215,7 @@ export function CalibrationWorkspace({ movementId, movementName, isDemo, media, 
         <p className="mb-1 text-sm font-medium uppercase tracking-widest text-bronze-700">Movement Calibration Workspace</p>
         <h1 className="font-serif text-3xl text-forest-900">{movementName}{isDemo && <span className="ml-3 align-middle text-sm font-normal text-slate-600">[DEMO]</span>}</h1>
         <p className="mt-3 max-w-3xl rounded-xl border border-line-200 bg-parchment-100 px-4 py-3 text-sm text-slate-600">
-          Ruang kerja untuk menandai fase dan timestamp pada video referensi. Penanda disimpan sebagai <strong className="text-ink-950">instructor reference annotation</strong> — bukan ground truth ilmiah dan bukan label akurasi.
+          Ruang kerja untuk menandai fase dan timestamp pada video referensi. Penanda disimpan sebagai <strong className="text-ink-950">instructor reference annotation</strong>, bukan ground truth ilmiah dan bukan label akurasi.
           Tidak ada skor, ambang, kemiripan, atau koreksi otomatis di sini. Overlay dihitung di peramban dan tidak disimpan.
         </p>
       </header>
@@ -224,7 +224,7 @@ export function CalibrationWorkspace({ movementId, movementName, isDemo, media, 
       <div className="flex flex-wrap items-end gap-4">
         <Field id="cal-source" label="Sumber referensi">
           <select id="cal-source" value={source} onChange={(e) => changeSource(e.target.value)} className={inputCls}>
-            {videos.map((v) => <option key={v.id} value={v.id}>{v.is_demo ? "[DEMO] " : ""}{v.title} — {v.consent_label}</option>)}
+            {videos.map((v) => <option key={v.id} value={v.id}>{v.is_demo ? "[DEMO] " : ""}{v.title}, {v.consent_label}</option>)}
             <option value={FIXTURE}>{FIXTURE_LABEL}</option>
           </select></Field>
         <fieldset className="flex gap-4 pb-2.5"><legend className="sr-only">Tata letak perbandingan</legend>
@@ -239,7 +239,7 @@ export function CalibrationWorkspace({ movementId, movementName, isDemo, media, 
         <figure className="min-w-0">
           <figcaption className="mb-1 text-sm font-medium">Video referensi</figcaption>
           <div className="relative overflow-hidden rounded-xl bg-ink-950" style={{ width: layout === "stack" ? box.width : undefined, aspectRatio: layout === "side" ? `${box.width} / ${box.height}` : undefined, height: layout === "stack" ? box.height : undefined }}>
-            {isFixture ? <p className="absolute inset-0 flex items-center justify-center px-6 text-center text-sm text-paper-50/80">{FIXTURE_LABEL}. Tidak ada video — hanya kerangka sintetis untuk menguji timeline dan penanda.</p>
+            {isFixture ? <p className="absolute inset-0 flex items-center justify-center px-6 text-center text-sm text-paper-50/80">{FIXTURE_LABEL}. Tidak ada video, hanya kerangka sintetis untuk menguji timeline dan penanda.</p>
                 : current ? <video ref={videoRef} key={current.id} src={current.url} preload="auto" playsInline muted className="h-full w-full object-contain" aria-label={`Video referensi: ${current.title}`} /> : null}
             {layout === "stack" && <canvas ref={canvasRef} aria-label="Overlay kerangka" role="img" className="pointer-events-none absolute inset-0 h-full w-full" />}
           </div>
@@ -267,7 +267,7 @@ export function CalibrationWorkspace({ movementId, movementName, isDemo, media, 
           onKeyDown={onTimelineKey} onClick={(e) => { const r = e.currentTarget.getBoundingClientRect(); seek(posToMs(e.clientX - r.left, r.width, durationMs)); }}
           className="relative h-10 cursor-pointer rounded-lg bg-line-200">
           {segs.map((s, i) => <div key={s.startMarkerId} aria-hidden className={`absolute inset-y-0 ${i % 2 ? "bg-sage-500/30" : "bg-bronze-500/25"}`} style={{ left: `${msToPct(s.fromMs, durationMs)}%`, width: `${msToPct(s.toMs - s.fromMs, durationMs)}%` }} />)}
-          {markers.map((m) => <span key={m.id} aria-hidden title={`${formatTimeMs(m.timestamp_ms)} — ${m.label}`} className={`absolute inset-y-0 w-0.5 ${m.review_status === "accepted" ? "bg-forest-700" : m.review_status === "rejected" ? "bg-clay-600" : "bg-bronze-700"}`} style={{ left: `${msToPct(m.timestamp_ms, durationMs)}%` }} />)}
+          {markers.map((m) => <span key={m.id} aria-hidden title={`${formatTimeMs(m.timestamp_ms)}, ${m.label}`} className={`absolute inset-y-0 w-0.5 ${m.review_status === "accepted" ? "bg-forest-700" : m.review_status === "rejected" ? "bg-clay-600" : "bg-bronze-700"}`} style={{ left: `${msToPct(m.timestamp_ms, durationMs)}%` }} />)}
           <span aria-hidden className="absolute inset-y-0 w-1 -translate-x-1/2 rounded bg-ink-950" style={{ left: `${msToPct(timeMs, durationMs)}%` }} />
         </div>
         <p className="mt-2 text-sm text-slate-600" aria-live="polite">{seg ? `Segmen saat ini: “${seg.label}” (${formatTimeMs(seg.fromMs)}–${formatTimeMs(seg.toMs)})` : "Belum ada segmen pada posisi ini."}{near ? ` · di dekat penanda “${near.label}”` : ""}</p>
@@ -275,7 +275,7 @@ export function CalibrationWorkspace({ movementId, movementName, isDemo, media, 
 
         <form onSubmit={addMarker} className="mt-5 grid gap-3 border-t border-line-200 pt-4 sm:grid-cols-2">
           <h2 className="font-semibold sm:col-span-2">Tandai fase pada {formatTimeMs(timeMs)}</h2>
-          <Field id="m-phase" label="Fase (opsional)"><select id="m-phase" value={phaseId} onChange={(e) => setPhaseId(e.target.value)} className={inputCls}><option value="">— tanpa fase —</option>{phases.filter((p) => p.id).map((p, i) => <option key={p.id} value={p.id}>{i + 1}. {p.name}</option>)}</select></Field>
+          <Field id="m-phase" label="Fase (opsional)"><select id="m-phase" value={phaseId} onChange={(e) => setPhaseId(e.target.value)} className={inputCls}><option value="">Tanpa fase</option>{phases.filter((p) => p.id).map((p, i) => <option key={p.id} value={p.id}>{i + 1}. {p.name}</option>)}</select></Field>
           <Field id="m-label" label="Label penanda" hint="Mis. “awal fase 2”."><input id="m-label" value={label} onChange={(e) => setLabel(e.target.value)} maxLength={200} className={inputCls} /></Field>
           <div className="sm:col-span-2"><Field id="m-note" label="Catatan (opsional)"><input id="m-note" value={note} onChange={(e) => setNote(e.target.value)} maxLength={2000} className={inputCls} /></Field></div>
           <div className="sm:col-span-2"><button disabled={busy} className={btnPrimary}>{busy ? "Menyimpan…" : "Simpan penanda"}</button></div>
@@ -292,14 +292,14 @@ export function CalibrationWorkspace({ movementId, movementName, isDemo, media, 
                 <tr key={a.id}>
                   <td className="px-4 py-3 font-mono tabular-nums"><button onClick={() => seek(a.timestamp_ms)} className="underline">{formatTimeMs(a.timestamp_ms)}</button></td>
                   <td className="px-4 py-3">{a.label}{a.note && <span className="block text-xs text-slate-600">{a.note}</span>}</td>
-                  <td className="px-4 py-3 text-xs text-slate-600">{a.annotator ?? "—"} · {formatDateTime(a.created_at)}<br />Model: {a.model_version ?? "tanpa overlay"}<br />{a.source_note}</td>
-                  <td className="px-4 py-3">{a.review_status === "pending" ? "Menunggu tinjauan" : a.review_status === "accepted" ? `Diterima (${a.reviewed_by ?? "—"})` : `Ditolak (${a.reviewed_by ?? "—"})`}</td>
+                  <td className="px-4 py-3 text-xs text-slate-600">{a.annotator ?? "-"} · {formatDateTime(a.created_at)}<br />Model: {a.model_version ?? "tanpa overlay"}<br />{a.source_note}</td>
+                  <td className="px-4 py-3">{a.review_status === "pending" ? "Menunggu tinjauan" : a.review_status === "accepted" ? `Diterima (${a.reviewed_by ?? "-"})` : `Ditolak (${a.reviewed_by ?? "-"})`}</td>
                   <td className="px-4 py-3"><div className="flex items-center gap-2">
                     {a.annotator_user_id !== viewerId && a.review_status !== "accepted" && <button onClick={() => review(a, "accepted")} className="underline">Terima</button>}
                     {a.annotator_user_id !== viewerId && a.review_status !== "rejected" && <button onClick={() => review(a, "rejected")} className="underline">Tolak</button>}
                     {(a.annotator_user_id === viewerId || viewerRole !== "instructor") && <button aria-label={`Hapus penanda ${a.label}`} onClick={() => remove(a)} className="text-clay-600"><Trash2 aria-hidden className="h-4 w-4" /></button>}</div></td>
                 </tr>))}</tbody></table></div>)}
-        <p className="mt-2 text-xs text-slate-600">“Diterima” berarti peninjau setuju penanda sesuai arahan instruktur — bukan pernyataan bahwa gerakan benar atau akurat secara teknis.</p>
+        <p className="mt-2 text-xs text-slate-600">“Diterima” berarti peninjau setuju penanda sesuai arahan instruktur, bukan pernyataan bahwa gerakan benar atau akurat secara teknis.</p>
       </section>
     </div>
   );
