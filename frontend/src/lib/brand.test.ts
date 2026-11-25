@@ -19,20 +19,21 @@ describe("identitas brand (maskot)", () => {
   it("tidak ada logo SVG/inline lama: simbol brand hanya dari komponen Brand", () => {
     for (const f of files(SRC)) {
       const src = readFileSync(f, "utf8");
-      const name = f.replace(SRC, "");
+      const name = f.replace(SRC, "").replaceAll("\\", "/");
       if (/silatara-mark\.png/.test(src)) expect(name, "silatara-mark hanya di Brand.tsx").toMatch(/components\/Brand\.tsx$/);
       expect(/<svg[^>]*aria-label="[^"]*(logo|SILATARA)/i.test(src) && !/landing\/SkeletonDemo/.test(name), `${name}: logo SVG terpisah`).toBe(false);
     }
   });
-  it("hero memakai logo resmi & pendekar dari desainer, tanpa membungkus logo dengan lingkaran", () => {
-    const src = readFileSync(join(SRC, "app/page.tsx"), "utf8");
-    expect(src).toContain("/brand/silatara-logo-full.png");
-    for (const f of ["silat-duel-left", "silat-duel-right", "silat-masters-perguruan-transparent"]) {
-      expect(src, f).toContain(`/landing/${f}.png`);
-      expect(existsSync(join(SRC, "../public/landing", `${f}.png`)), f).toBe(true);
-    }
-    expect(src).toMatch(/priority/);
-    const logoImg = src.slice(src.indexOf('src="/brand/silatara-logo-full.png"'), src.indexOf("/>", src.indexOf('src="/brand/silatara-logo-full.png"')));
+  it("hero memakai SunsetCloudsHero SVG/CSS murni dan logo resmi di Brand tanpa lingkaran", () => {
+    const pageSrc = readFileSync(join(SRC, "app/page.tsx"), "utf8");
+    expect(pageSrc).toContain("<SunsetCloudsHero");
+    const heroSrc = readFileSync(join(SRC, "components/landing/SunsetCloudsHero.tsx"), "utf8");
+    expect(heroSrc).toContain("<linearGradient");
+    expect(heroSrc).toContain('stopOpacity="0"');
+    expect(heroSrc).not.toMatch(/<(?:Image|img)\b/);
+    const brandSrc = readFileSync(join(SRC, "components/Brand.tsx"), "utf8");
+    expect(brandSrc).toContain("/brand/silatara-logo-full.png");
+    const logoImg = brandSrc.slice(brandSrc.indexOf('src="/brand/silatara-logo-full.png"'), brandSrc.indexOf("/>", brandSrc.indexOf('src="/brand/silatara-logo-full.png"')));
     expect(logoImg).not.toMatch(/rounded-full|border-radius/);
   });
   it("halaman publik tidak menampilkan rujukan/halaman kutipan maupun testimoni karangan", () => {
