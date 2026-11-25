@@ -5,8 +5,10 @@ import { clientRequest } from "@/lib/client-api";
 import { validateEmailOnly, validateNewPassword } from "@/lib/validation";
 import { Notice } from "@/components/Notice";
 
-const inputCls = "w-full rounded-xl border border-line-200 bg-paper-50 px-3 py-2.5";
-const btn = "w-full rounded-xl bg-forest-700 px-5 py-3 font-medium text-paper-50 hover:bg-forest-900 disabled:opacity-60";
+const inputCls =
+  "w-full rounded-2xl border border-[#7C1D1D]/15 bg-[#FFF8EE]/70 px-4 py-3 text-sm text-[#3B0D0C] placeholder:text-[#3B0D0C]/40 transition-all focus:border-[#C2410C] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#C2410C]/20";
+const btn =
+  "w-full rounded-full bg-gradient-to-r from-[#3B0D0C] via-[#6D1815] to-[#B45309] px-6 py-3.5 text-sm font-bold text-[#FFF8EE] shadow-md shadow-[#3B0D0C]/20 transition-all hover:-translate-y-0.5 hover:brightness-110 disabled:opacity-60";
 
 /** Hapus ?token= dari URL setelah dibaca agar tidak tertinggal di riwayat/Referer. */
 function useStripToken() {

@@ -31,15 +31,27 @@ export function DemoLogin({ accounts, next }: { accounts: DemoAccount[]; next?: 
   }
 
   return (
-    <section aria-labelledby="demo-login-title" className="mt-6 rounded-2xl border border-dashed border-bronze-500 bg-parchment-100 p-4">
-      <h2 id="demo-login-title" className="text-sm font-semibold text-forest-900">Masuk cepat dengan akun demo</h2>
-      <p className="mt-1 text-xs text-slate-600">Khusus pengembangan &amp; presentasi. Data akun ini fiktif [DEMO].</p>
+    <section
+      aria-labelledby="demo-login-title"
+      className="rounded-2xl border border-dashed border-[#D97706]/45 bg-[#FFF8EE]/85 p-4"
+    >
+      <h2 id="demo-login-title" className="text-xs font-bold uppercase tracking-[0.12em] text-[#3B0D0C]">
+        Masuk cepat dengan akun demo
+      </h2>
+      <p className="mt-1 text-xs text-[#3B0D0C]/70">
+        Khusus pengembangan &amp; presentasi. Data akun ini fiktif [DEMO].
+      </p>
       <div className="mt-3 grid gap-2 sm:grid-cols-2">
         {accounts.map((a) => (
-          <button key={a.key} type="button" onClick={() => login(a.key)} disabled={busy !== null}
-            className="rounded-xl border border-line-200 bg-paper-50 px-3 py-2.5 text-left hover:border-forest-700 disabled:opacity-60">
-            <span className="block font-medium text-forest-900">{busy === a.key ? "Memproses…" : a.label}</span>
-            <span className="block text-xs text-slate-600">{a.description}</span>
+          <button
+            key={a.key}
+            type="button"
+            onClick={() => login(a.key)}
+            disabled={busy !== null}
+            className="rounded-xl border border-[#7C1D1D]/15 bg-white px-3 py-2.5 text-left transition-all hover:border-[#C2410C]/50 hover:bg-[#FFF8EE] disabled:opacity-60"
+          >
+            <span className="block text-xs font-bold text-[#3B0D0C]">{busy === a.key ? "Memproses…" : a.label}</span>
+            <span className="block text-[11px] text-[#3B0D0C]/65">{a.description}</span>
           </button>
         ))}
       </div>
