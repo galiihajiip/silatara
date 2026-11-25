@@ -1,7 +1,9 @@
 // @vitest-environment jsdom
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import axe from "axe-core";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { AuthBentoShell } from "@/components/AuthBentoShell";
 import { AuthForm } from "@/components/AuthForm";
 import { EmptyState, Pagination, ProgressBar, ProvenanceBadge } from "@/components/ui";
 
@@ -53,6 +55,39 @@ describe("AuthForm (login)", () => {
     await userEvent.type(screen.getByLabelText("Kata sandi"), "apa-saja");
     await userEvent.click(screen.getByRole("button", { name: "Masuk" }));
     await waitFor(() => expect(push).toHaveBeenCalledWith("/app"));
+  });
+  it("merender bingkai Bento 2-kolom dengan toggle visibilitas sandi dan lolos axe-core", async () => {
+    const { container } = render(
+      <AuthBentoShell title="Masuk" description="Lanjutkan belajar dan lihat progres Anda.">
+        <AuthForm mode="login" />
+      </AuthBentoShell>,
+    );
+    const shell = container.querySelector("[data-auth-page]");
+    expect(shell).not.toBeNull();
+    expect(shell?.hasAttribute("data-fullbleed")).toBe(true);
+    expect(shell?.className).toContain("min-h-dvh");
+    expect(shell?.className).toContain("w-full");
+    expect(shell?.className).toContain("lg:grid-cols-2");
+    expect(shell?.querySelectorAll("pattern")).toHaveLength(0);
+    expect(screen.getByRole("heading", { level: 1, name: "Masuk" })).toBeTruthy();
+    expect(screen.getByRole("link", { name: /Kembali ke Beranda/i }).getAttribute("href")).toBe("/");
+    expect(screen.queryByText("Warisan Nusantara")).toBeNull();
+    expect(screen.queryByText("ARSIP 3D · LATIHAN")).toBeNull();
+    expect(screen.queryByText("Pelestarian Silat Nusantara")).toBeNull();
+    const aside = shell?.querySelector("aside");
+    expect(aside).not.toBeNull();
+    expect(aside?.textContent?.trim()).toBe("");
+    expect(screen.getByText(/38 Provinsi · 120\+ Gerakan Terarsip/)).toBeTruthy();
+
+    const pw = screen.getByLabelText("Kata sandi") as HTMLInputElement;
+    expect(pw.type).toBe("password");
+    await userEvent.click(screen.getByRole("button", { name: "Tampilkan kata sandi" }));
+    expect(pw.type).toBe("text");
+    await userEvent.click(screen.getByRole("button", { name: "Sembunyikan kata sandi" }));
+    expect(pw.type).toBe("password");
+
+    const a11y = await axe.run(container);
+    expect(a11y.violations).toEqual([]);
   });
 });
 

@@ -16,15 +16,20 @@ const doc = (over: Partial<PublicDocument> = {}): PublicDocument => ({
 });
 
 describe("MovementDocumentView", () => {
-  it("menampilkan versi, penyusun, fase, kategori, dan changelog; teks HTML ditampilkan sebagai teks (tidak dieksekusi)", () => {
+  it("menampilkan versi, penyusun, langkah fase, dan changelog tanpa basa-basi solo; teks HTML ditampilkan sebagai teks (tidak dieksekusi)", () => {
     const { container } = render(<MovementDocumentView doc={doc()} />);
+    expect(screen.getByRole("heading", { name: "Langkah demi langkah" })).toBeTruthy();
     expect(screen.getByText("Fase A")).toBeTruthy();
     expect(screen.getByText(/Disusun oleh/)).toBeTruthy();
     expect(screen.getByText("Guru Uji")).toBeTruthy();
-    expect(screen.getByText(/klasifikasi administratif, bukan sertifikasi keselamatan/)).toBeTruthy();
+    expect(screen.queryByText(/Dapat dilatih sendiri|klasifikasi administratif/i)).toBeNull();
     expect(screen.getByText(/Catatan perubahan versi ini: Perbaikan kecil/)).toBeTruthy();
     expect(container.querySelector("script")).toBeNull();
     expect(container.textContent).toContain("<script>alert(1)</script>");
+  });
+  it("menampilkan peringatan ringkas saat kategori keselamatan membutuhkan instruktur", () => {
+    render(<MovementDocumentView doc={doc({ safety_category: "supervised_practice" })} />);
+    expect(screen.getByText("Latih bersama instruktur.")).toBeTruthy();
   });
   it("pratinjau berlabel; tanpa media tidak ada bagian media (dokumentasi teks tetap sah)", () => {
     render(<MovementDocumentView doc={doc()} preview />);
