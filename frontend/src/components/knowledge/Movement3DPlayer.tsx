@@ -32,7 +32,17 @@ function webglAvailable(): boolean {
   } catch { return false; }
 }
 
-export function Movement3DPlayer({ clip, title, fallback }: { clip: ClipMeta; title: string; fallback?: React.ReactNode }) {
+export function Movement3DPlayer({
+  clip,
+  title,
+  fallback,
+  variant = "default",
+}: {
+  clip: ClipMeta;
+  title: string;
+  fallback?: React.ReactNode;
+  variant?: "default" | "hero";
+}) {
   const host = useRef<HTMLDivElement>(null);
   const [state, setState] = useState<"idle" | "loading" | "ready" | "error">("idle");
   const reducedMotion = useSyncExternalStore(subscribeRM, () => window.matchMedia(RM).matches, () => false);
@@ -210,54 +220,66 @@ export function Movement3DPlayer({ clip, title, fallback }: { clip: ClipMeta; ti
       </div>
     );
   }
-  const btnBase = "inline-flex h-9 items-center justify-center gap-1 rounded-lg border px-2.5 text-sm disabled:opacity-50";
-  const btn = `${btnBase} border-line-200 bg-paper-50 hover:bg-parchment-100`;
+  const hero = variant === "hero";
+  const btnBase = hero
+    ? "inline-flex h-9 items-center justify-center gap-1.5 rounded-full border px-3 text-sm font-medium transition-colors disabled:opacity-50"
+    : "inline-flex h-9 items-center justify-center gap-1 rounded-lg border px-2.5 text-sm disabled:opacity-50";
+  const btn = `${btnBase} border-line-200 bg-paper-50 text-slate-700 hover:bg-parchment-100`;
   const btnOn = `${btnBase} border-forest-700 bg-forest-700 text-paper-50 hover:bg-forest-900`;
   const ready = state === "ready";
   return (
-    <figure className="overflow-hidden rounded-xl border border-line-200 bg-paper-50">
-      <div ref={host} className="relative aspect-[4/5] w-full bg-parchment-100" data-state={state} data-testid="movement-3d">
+    <figure className={`overflow-hidden border ${hero ? "rounded-[20px] border-slate-200/80 bg-white" : "rounded-xl border-line-200 bg-paper-50"}`}>
+      <div
+        ref={host}
+        className={`relative w-full bg-parchment-100 ${hero ? "aspect-[4/3] max-h-[520px] sm:aspect-[16/10]" : "aspect-[4/5]"}`}
+        data-state={state}
+        data-testid="movement-3d"
+      >
         {!ready && <div className="absolute inset-0 grid place-items-center text-sm text-slate-600">Memuat peraga 3D…</div>}
         {ready && phase && (
-          <div aria-live="polite" className="pointer-events-none absolute left-2 top-2 max-w-[85%] rounded-lg bg-paper-50/90 px-2.5 py-1.5 text-xs shadow-sm">
-            <span className="font-medium">{phase.label}</span>{phase.caption ? <span className="text-slate-600"> · {phase.caption}</span> : null}
+          <div aria-live="polite" className={`pointer-events-none absolute left-3 top-3 max-w-[85%] rounded-full bg-paper-50/92 px-3 py-1.5 text-xs shadow-sm backdrop-blur-xs ${hero ? "border border-slate-200/70" : "rounded-lg left-2 top-2 px-2.5"}`}>
+            <span className="font-semibold text-forest-900">{phase.label}</span>{phase.caption ? <span className="text-slate-600"> · {phase.caption}</span> : null}
           </div>
         )}
       </div>
-      <div className="space-y-2 p-2.5">
+      <div className={hero ? "space-y-3 bg-white p-4 sm:p-5" : "space-y-2 p-2.5"}>
         {/* linimasa + penanda fase */}
         <div className="relative h-6" role="group" aria-label="Linimasa gerakan">
-          <div className="absolute inset-x-0 top-2.5 h-1 rounded-full bg-line-200" />
-          <div className="absolute left-0 top-2.5 h-1 rounded-full bg-forest-700" style={{ width: `${(time / clip.duration_s) * 100}%` }} />
+          <div className="absolute inset-x-0 top-2.5 h-1.5 rounded-full bg-line-200" />
+          <div className="absolute left-0 top-2.5 h-1.5 rounded-full bg-forest-700" style={{ width: `${(time / clip.duration_s) * 100}%` }} />
           {clip.phases.map((p, i) => (
             <button key={`${p.keyframe}-${i}`} type="button" disabled={!ready} onClick={() => api.current?.seek(p.start + 0.01)}
               className={`absolute top-0 h-6 w-3 -translate-x-1/2 rounded ${phase === p ? "bg-bronze-500" : "bg-transparent"} after:absolute after:left-1/2 after:top-1.5 after:h-3 after:w-1 after:-translate-x-1/2 after:rounded-full after:bg-forest-900`}
               style={{ left: `${(p.start / clip.duration_s) * 100}%` }} aria-label={`Ke fase ${i + 1}: ${p.label}`} title={p.label ?? undefined} />
           ))}
         </div>
-        <div className="flex flex-wrap items-center gap-1.5">
-          <button type="button" className={btn} disabled={!ready} onClick={() => setChoice(!playing)} aria-label={playing ? "Jeda" : "Putar"}>
-            {playing ? <Pause aria-hidden className="h-4 w-4" /> : <Play aria-hidden className="h-4 w-4" />}
-          </button>
-          <button type="button" className={btn} disabled={!ready} onClick={() => { api.current?.seek(0); setChoice(true); }} aria-label="Putar ulang"><RotateCcw aria-hidden className="h-4 w-4" /></button>
-          <button type="button" className={btn} disabled={!ready} onClick={() => goPhase(-1)} aria-label="Fase sebelumnya"><ChevronLeft aria-hidden className="h-4 w-4" /></button>
-          <button type="button" className={btn} disabled={!ready} onClick={() => goPhase(1)} aria-label="Fase berikutnya"><ChevronRight aria-hidden className="h-4 w-4" /></button>
-          <label className="sr-only" htmlFor={`spd-${clip.clip}`}>Kecepatan</label>
-          <select id={`spd-${clip.clip}`} className="h-9 rounded-lg border border-line-200 bg-paper-50 px-2 text-sm" value={speed} disabled={!ready}
-            onChange={(e) => setSpeed(Number(e.target.value) as (typeof SPEEDS)[number])}>
-            {SPEEDS.map((s) => <option key={s} value={s}>{String(s).replace(".", ",")}×</option>)}
-          </select>
+        <div className={hero ? "flex flex-wrap items-center justify-between gap-3" : "space-y-2"}>
+          <div className="flex flex-wrap items-center gap-1.5">
+            <button type="button" className={btn} disabled={!ready} onClick={() => setChoice(!playing)} aria-label={playing ? "Jeda" : "Putar"}>
+              {playing ? <Pause aria-hidden className="h-4 w-4" /> : <Play aria-hidden className="h-4 w-4" />}
+            </button>
+            <button type="button" className={btn} disabled={!ready} onClick={() => { api.current?.seek(0); setChoice(true); }} aria-label="Putar ulang"><RotateCcw aria-hidden className="h-4 w-4" /></button>
+            <button type="button" className={btn} disabled={!ready} onClick={() => goPhase(-1)} aria-label="Fase sebelumnya"><ChevronLeft aria-hidden className="h-4 w-4" /></button>
+            <button type="button" className={btn} disabled={!ready} onClick={() => goPhase(1)} aria-label="Fase berikutnya"><ChevronRight aria-hidden className="h-4 w-4" /></button>
+            <label className="sr-only" htmlFor={`spd-${clip.clip}`}>Kecepatan</label>
+            <select id={`spd-${clip.clip}`} className={`h-9 border border-line-200 bg-paper-50 px-2.5 text-sm font-medium text-slate-700 ${hero ? "rounded-full" : "rounded-lg"}`} value={speed} disabled={!ready}
+              onChange={(e) => setSpeed(Number(e.target.value) as (typeof SPEEDS)[number])}>
+              {SPEEDS.map((s) => <option key={s} value={s}>{String(s).replace(".", ",")}×</option>)}
+            </select>
+          </div>
+          <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label="Sudut pandang">
+            {(["front", "side", "three_quarter"] as ViewKey[]).map((v) => (
+              <button key={v} type="button" className={view === v && !orbit ? btnOn : btn}
+                aria-pressed={view === v && !orbit} disabled={!ready} onClick={() => changeView(v)}>{VIEW_LABEL[v]}</button>
+            ))}
+            <button type="button" className={orbit ? btnOn : btn} aria-pressed={orbit}
+              disabled={!ready} onClick={() => setOrbit(!orbit)}><Rotate3d aria-hidden className="h-4 w-4" />360°</button>
+            <button type="button" className={btn} disabled={!ready} onClick={() => api.current?.resetCamera()} aria-label="Atur ulang kamera"><RotateCw aria-hidden className="h-4 w-4" /></button>
+          </div>
         </div>
-        <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label="Sudut pandang">
-          {(["front", "side", "three_quarter"] as ViewKey[]).map((v) => (
-            <button key={v} type="button" className={view === v && !orbit ? btnOn : btn}
-              aria-pressed={view === v && !orbit} disabled={!ready} onClick={() => changeView(v)}>{VIEW_LABEL[v]}</button>
-          ))}
-          <button type="button" className={orbit ? btnOn : btn} aria-pressed={orbit}
-            disabled={!ready} onClick={() => setOrbit(!orbit)}><Rotate3d aria-hidden className="h-4 w-4" />360°</button>
-          <button type="button" className={btn} disabled={!ready} onClick={() => api.current?.resetCamera()} aria-label="Atur ulang kamera"><RotateCw aria-hidden className="h-4 w-4" /></button>
-        </div>
-        <figcaption className="text-xs text-slate-600">Seret untuk memutar, cubit atau gulir untuk memperbesar. Fase {phaseIdx >= 0 ? phaseIdx + 1 : 1} dari {clip.phases.length}.</figcaption>
+        <figcaption className={`text-xs text-slate-500 ${hero ? "border-t border-slate-100 pt-2.5 text-center sm:text-left" : "text-slate-600"}`}>
+          Seret untuk memutar, cubit atau gulir untuk memperbesar. Fase {phaseIdx >= 0 ? phaseIdx + 1 : 1} dari {clip.phases.length}.
+        </figcaption>
       </div>
     </figure>
   );
