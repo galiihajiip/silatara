@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import axe from "axe-core";
 import { describe, expect, it, vi } from "vitest";
 import AppLayout from "@/app/app/layout";
 import { RoleIconRail } from "@/components/AppNav";
@@ -23,16 +24,34 @@ vi.mock("@/lib/server-api", () => ({
 }));
 
 describe("SiteFooter suppression in CMS (/app/**) and practice routes", () => {
-  it("renders footer on public pages with solid white surface and no batik pattern", () => {
-    for (const p of ["/", "/heritage", "/library", "/academy", "/library/kuda-kuda-tengah"]) {
+  it("renders cohesive Deep Royal Maroon (#3B0D0C) footer on public pages with high-contrast logo backdrop and essential links", async () => {
+    for (const p of ["/", "/heritage", "/library", "/academy", "/community/peta", "/library/kuda-kuda-tengah"]) {
       currentPathname = p;
       const { container, unmount } = render(<SiteFooter />);
       const footer = container.querySelector("footer");
       expect(footer, p).not.toBeNull();
       expect(footer?.hasAttribute("data-site-footer")).toBe(true);
-      expect(footer?.className).toContain("bg-white");
-      expect(footer?.className).not.toContain("bg-white/80");
+      expect(footer?.className).toContain("bg-[#3B0D0C]");
+      expect(footer?.className).toContain("border-amber-200/15");
+      expect(footer?.className).not.toContain("bg-white");
       expect(footer?.className).not.toContain("bg-batik-kawung");
+
+      // High-contrast Warm Ivory pill backdrop around BrandLogo
+      const brandLink = within(footer as HTMLElement).getByRole("link", { name: "SILATARA: beranda" });
+      expect(brandLink.className).toContain("bg-[#FFF8EE]");
+
+      // Essential navigation links
+      for (const href of ["/library", "/heritage", "/academy", "/community/peta", "/masuk", "/daftar", "/status"]) {
+        expect(footer?.querySelector(`a[href="${href}"]`), `${p} -> ${href}`).not.toBeNull();
+      }
+
+      // Invariants: no deprecated greens, no em-dashes
+      expect(footer?.innerHTML).not.toMatch(/#0B7A4B|#10945C|#315C4D|#E6F4EE/i);
+      expect(footer?.innerHTML).not.toMatch(/\b(emerald|green|teal)-/);
+      expect(footer?.textContent).not.toContain("\u2014");
+
+      const a11y = await axe.run(container);
+      expect(a11y.violations).toEqual([]);
       unmount();
     }
   });
@@ -272,13 +291,14 @@ describe("Batik Kawung subtle background across application shells and exclusion
     expect(pill?.className).toContain("bg-[#FFF8EE]/92");
   });
 
-  it("excludes batik pattern from SiteFooter and gives footer solid white surface", () => {
+  it("excludes batik pattern from SiteFooter and gives footer cohesive #3B0D0C surface", () => {
     currentPathname = "/";
     const { container } = render(<SiteFooter />);
     const footer = container.querySelector("footer");
     expect(footer?.hasAttribute("data-site-footer")).toBe(true);
     expect(footer?.className).not.toContain("bg-batik-kawung");
-    expect(footer?.className).toContain("bg-white");
+    expect(footer?.className).not.toContain("bg-white");
+    expect(footer?.className).toContain("bg-[#3B0D0C]");
   });
 });
 
